@@ -1,0 +1,19 @@
+version: '3'
+services:
+  app:
+    container_name: scade_server
+    build: .
+    ports:
+      - 8000:8009
+    restart: on-failure
+    volumes:
+      - api:/usr/src/app/
+    networks:
+      - fullstack
+
+volumes:
+  api:
+
+networks:
+  fullstack:
+    driver: bridge
