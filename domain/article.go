@@ -1,14 +1,21 @@
 package domain
 
+import (
+	"context"
+	"gorm.io/gorm"
+)
+
 type Article struct {
-	Title string `json:"title"`
-	Body  string `json:"body"`
+	gorm.Model
+	ID    uint   `gorm:"primaryKey;autoIncrement;not_null"`
+	Title string `gorm:"not_null"`
+	Body  string `gorm:"not_null"`
 }
 
 type ArticleRepository interface {
-	GetArticle() ([]Article, error)
+	GetArticle(ctx context.Context) ([]Article, error)
 }
 
 type ArticleUseCase interface {
-	GetArticle() ([]Article, error)
+	GetArticle(ctx context.Context) ([]Article, error)
 }
