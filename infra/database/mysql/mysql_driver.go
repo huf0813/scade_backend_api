@@ -21,11 +21,11 @@ func readMysqlEnv() (mysqlEnv envMysql, err error) {
 		return envMysql{}, err
 	}
 	return envMysql{
-		host:     os.Getenv("db_host"),
-		port:     os.Getenv("db_port"),
-		username: os.Getenv("db_username"),
-		password: os.Getenv("db_password"),
-		database: os.Getenv("db_name"),
+		host:     os.Getenv("MYSQL_DB_HOST"),
+		port:     os.Getenv("MYSQL_DB_PORT"),
+		username: os.Getenv("MYSQL_DB_USERNAME"),
+		password: os.Getenv("MYSQL_DB_PASSWORD"),
+		database: os.Getenv("MYSQL_DB_DATABASE"),
 	}, nil
 }
 
