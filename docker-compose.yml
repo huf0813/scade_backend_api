@@ -1,33 +1,35 @@
 version: '3'
 services:
   app:
-    container_name: scade_server
-    build: .
-    ports:
-      - 8000:8009
-    restart: on-failure
-    depends_on:
-      - mysql_db
-    networks:
-      - backend_connection
-
-  mysql_db:
-    image: mysql:8
     env_file:
       - .env
-    container_name: ${DB_HOST}
+    container_name: ${APP_CONTAINER}
+    build: .
     ports:
-      - "${DB_PORT}:3306"
-    environment:
-      - MYSQL_ROOT_HOST=${DB_HOST}
-      - MYSQL_USER=${DB_USERNAME}
-      - MYSQL_PASSWORD=${DB_PASSWORD}
-      - MYSQL_DATABASE=${DB_NAME}
-      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
+      - ${APP_PORT}:8080
+    depends_on:
+      - mysql_db
     restart: on-failure
     networks:
-      - backend_connection
+      - scade_backend_server
+
+  mysql_db:
+    image: mysql:latest
+    env_file:
+      - .env
+    container_name: ${MYSQL_DB_HOST}
+    ports:
+      - ${MYSQL_DB_PORT}:3306
+    environment:
+      - MYSQL_ROOT_HOST=${MYSQL_DB_HOST}
+      - MYSQL_USER=${MYSQL_DB_USERNAME}
+      - MYSQL_PASSWORD=${MYSQL_DB_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DB_DATABASE}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_DB_PASSWORD}
+    restart: on-failure
+    networks:
+      - scade_backend_server
 
 networks:
-  backend_connection:
+  scade_backend_server:
     driver: bridge

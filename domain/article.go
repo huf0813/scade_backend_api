@@ -12,10 +12,16 @@ type Article struct {
 	Body  string `gorm:"not_null"`
 }
 
+type ArticleResponse struct {
+	ID    uint   `json:"id"`
+	Title string `json:"title"`
+	Body  string `json:"body"`
+}
+
 type ArticleRepository interface {
-	GetArticle(ctx context.Context) ([]Article, error)
+	GetArticles(ctx context.Context) ([]ArticleResponse, error)
 }
 
 type ArticleUseCase interface {
-	GetArticle(ctx context.Context) ([]Article, error)
+	GetArticles(ctx context.Context) ([]ArticleResponse, error)
 }
