@@ -6,9 +6,28 @@ services:
     ports:
       - 8000:8009
     restart: on-failure
+    depends_on:
+      - mysql_db
     networks:
-      - fullstack
+      - backend_connection
+
+  mysql_db:
+    image: mysql:8
+    env_file:
+      - .env
+    container_name: ${DB_HOST}
+    ports:
+      - "${DB_PORT}:3306"
+    environment:
+      - MYSQL_ROOT_HOST=${DB_HOST}
+      - MYSQL_USER=${DB_USERNAME}
+      - MYSQL_PASSWORD=${DB_PASSWORD}
+      - MYSQL_DATABASE=${DB_NAME}
+      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
+    restart: on-failure
+    networks:
+      - backend_connection
 
 networks:
-  fullstack:
+  backend_connection:
     driver: bridge
