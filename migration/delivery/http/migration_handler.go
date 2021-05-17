@@ -14,7 +14,7 @@ type MigrationHandler struct {
 func NewMigrationHandler(e *echo.Echo, m domain.MigrationUseCase) {
 	handler := &MigrationHandler{MigrationUseCase: m}
 	e.GET("/migrate", handler.Migrate)
-	e.GET("/seeder", handler.Seeder)
+	e.GET("/seed", handler.Seeder)
 }
 
 func (m *MigrationHandler) Migrate(c echo.Context) error {
