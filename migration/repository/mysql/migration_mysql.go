@@ -63,5 +63,25 @@ func (m *MigrationRepoMysql) Seed(ctx context.Context) error {
 			return err
 		}
 	}
+
+	var articles []domain.Article
+	articles = append(articles, domain.Article{
+		Title:     "What is Cancer?",
+		Body:      "Cancer is a disease",
+		Thumbnail: "image",
+		ArticleID: 1,
+	})
+	articles = append(articles, domain.Article{
+		Title:     "Apa itu Kanker?",
+		Body:      "Kancker adalah penyakit",
+		Thumbnail: "image",
+		ArticleID: 2,
+	})
+	for _, v := range articles {
+		if err := m.DB.WithContext(ctx).Create(&v).Error; err != nil {
+			return err
+		}
+	}
+
 	return nil
 }
