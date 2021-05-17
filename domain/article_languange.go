@@ -7,9 +7,8 @@ import (
 
 type ArticleLanguage struct {
 	gorm.Model
-	ID       uint      `gorm:"primaryKey;autoIncrement;not_null" json:"id"`
-	Language string    `gorm:"not_null" json:"language"`
-	Articles []Article `gorm:"foreignKey:ArticleID" json:"articles"`
+	Language string    `gorm:"not_null;unique" json:"language"`
+	Articles []Article `gorm:"foreignKey:ArticleLanguageID" json:"articles"`
 }
 
 type ArticleLanguageRepository interface {
