@@ -18,14 +18,28 @@ func (m *MigrationRepoMysql) Migrate(ctx context.Context) error {
 	if err := m.DB.
 		WithContext(ctx).
 		Migrator().
+		DropTable(&domain.ArticleLanguage{}); err != nil {
+		return err
+	}
+	if err := m.DB.
+		WithContext(ctx).
+		Migrator().
 		DropTable(&domain.Article{}); err != nil {
+		return err
+	}
+
+	if err := m.DB.
+		WithContext(ctx).
+		Set("gorm:table_options", "ENGINE=InnoDB").
+		Migrator().
+		CreateTable(&domain.Article{}); err != nil {
 		return err
 	}
 	if err := m.DB.
 		WithContext(ctx).
 		Set("gorm:table_options", "ENGINE=InnoDB").
 		Migrator().
-		CreateTable(&domain.Article{}); err != nil {
+		CreateTable(&domain.ArticleLanguage{}); err != nil {
 		return err
 	}
 	return nil
