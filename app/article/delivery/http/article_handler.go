@@ -13,7 +13,8 @@ type ArticleHandler struct {
 
 func NewArticleHandler(e *echo.Echo, auc domain.ArticleUseCase) {
 	handler := ArticleHandler{ArticleUseCase: auc}
-	e.GET("/articles", handler.GetArticles)
+	g := e.Group("/en")
+	g.GET("/articles", handler.GetArticles)
 }
 
 func (ah *ArticleHandler) GetArticles(c echo.Context) error {
