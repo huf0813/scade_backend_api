@@ -7,20 +7,15 @@ import (
 
 type ArticleLanguage struct {
 	gorm.Model
-	ID       uint      `gorm:"primaryKey;autoIncrement;not_null"`
-	Language string    `gorm:"not_null"`
-	Articles []Article `gorm:"foreignKey:ArticleID"`
-}
-
-type ArticleLanguageResponse struct {
-	ID       uint   `json:"id"`
-	Language string `json:"language"`
+	ID       uint      `gorm:"primaryKey;autoIncrement;not_null" json:"id"`
+	Language string    `gorm:"not_null" json:"language"`
+	Articles []Article `gorm:"foreignKey:ArticleID" json:"articles"`
 }
 
 type ArticleLanguageRepository interface {
-	GetArticleLanguages(ctx context.Context) ([]ArticleLanguageResponse, error)
+	GetArticleLanguages(ctx context.Context) ([]ArticleLanguage, error)
 }
 
 type ArticleLanguageUseCase interface {
-	GetArticleLanguages(ctx context.Context) ([]ArticleLanguageResponse, error)
+	GetArticleLanguages(ctx context.Context) ([]ArticleLanguage, error)
 }

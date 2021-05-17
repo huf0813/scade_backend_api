@@ -7,21 +7,16 @@ import (
 
 type Article struct {
 	gorm.Model
-	ID    uint   `gorm:"primaryKey;autoIncrement;not_null"`
-	Title string `gorm:"not_null"`
-	Body  string `gorm:"not_null"`
-}
-
-type ArticleResponse struct {
-	ID    uint   `json:"id"`
-	Title string `json:"title"`
-	Body  string `json:"body"`
+	ID        uint   `gorm:"primaryKey;autoIncrement;not_null" json:"id"`
+	Title     string `gorm:"not_null" json:"title"`
+	Body      string `gorm:"not_null" json:"body"`
+	ArticleID uint
 }
 
 type ArticleRepository interface {
-	GetArticles(ctx context.Context) ([]ArticleResponse, error)
+	GetArticles(ctx context.Context) ([]Article, error)
 }
 
 type ArticleUseCase interface {
-	GetArticles(ctx context.Context) ([]ArticleResponse, error)
+	GetArticles(ctx context.Context) ([]Article, error)
 }
