@@ -10,6 +10,7 @@ type Article struct {
 	ID        uint   `gorm:"primaryKey;autoIncrement;not_null" json:"id"`
 	Title     string `gorm:"not_null" json:"title"`
 	Body      string `gorm:"not_null" json:"body"`
+	Thumbnail string `gorm:"not_null" json:"thumbnail"`
 	ArticleID uint
 }
 
