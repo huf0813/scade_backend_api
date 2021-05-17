@@ -13,13 +13,35 @@ type ArticleHandler struct {
 
 func NewArticleHandler(e *echo.Echo, auc domain.ArticleUseCase) {
 	handler := ArticleHandler{ArticleUseCase: auc}
-	g := e.Group("/en")
-	g.GET("/articles", handler.GetArticles)
+	e.GET("/articles", handler.GetArticles)
+	e.GET("/articles/:lang", handler.GetArticlesBasedOnLanguage)
 }
 
 func (ah *ArticleHandler) GetArticles(c echo.Context) error {
 	ctx := c.Request().Context()
 	res, err := ah.ArticleUseCase.GetArticles(ctx)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError,
+			custom_response.NewCustomResponse(
+				false,
+				"failed to fetch articles, please try again later",
+				nil,
+			),
+		)
+	}
+	return c.JSON(http.StatusOK,
+		custom_response.NewCustomResponse(
+			true,
+			"fetch articles successfully",
+			res,
+		),
+	)
+}
+
+func (ah *ArticleHandler) GetArticlesBasedOnLanguage(c echo.Context) error {
+	ctx := c.Request().Context()
+	lang := c.Param("lang")
+	res, err := ah.ArticleUseCase.GetArticlesBasedOnLanguage(ctx, lang)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError,
 			custom_response.NewCustomResponse(
