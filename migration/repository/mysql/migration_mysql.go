@@ -15,19 +15,31 @@ func NewMigrationRepoMysql(conn *gorm.DB) domain.MigrationRepository {
 }
 
 func (m *MigrationRepoMysql) Migrate(ctx context.Context) error {
-	if err := m.DB.
-		WithContext(ctx).
-		Migrator().
-		DropTable(&domain.ArticleLanguage{}); err != nil {
-		return err
-	}
+	// layer two
 	if err := m.DB.
 		WithContext(ctx).
 		Migrator().
 		DropTable(&domain.Article{}); err != nil {
 		return err
 	}
+	// layer one
+	if err := m.DB.
+		WithContext(ctx).
+		Migrator().
+		DropTable(&domain.ArticleLanguage{}); err != nil {
+		return err
+	}
 
+	// layer one
+	if err := m.DB.
+		WithContext(ctx).
+		Set("gorm:table_options", "ENGINE=InnoDB").
+		Migrator().
+		CreateTable(&domain.ArticleLanguage{}); err != nil {
+		return err
+	}
+
+	// layer two
 	if err := m.DB.
 		WithContext(ctx).
 		Set("gorm:table_options", "ENGINE=InnoDB").
@@ -35,12 +47,21 @@ func (m *MigrationRepoMysql) Migrate(ctx context.Context) error {
 		CreateTable(&domain.Article{}); err != nil {
 		return err
 	}
-	if err := m.DB.
-		WithContext(ctx).
-		Set("gorm:table_options", "ENGINE=InnoDB").
-		Migrator().
-		CreateTable(&domain.ArticleLanguage{}); err != nil {
-		return err
+	return nil
+}
+
+func (m *MigrationRepoMysql) Seed(ctx context.Context) error {
+	var lang []domain.ArticleLanguage
+	lang = append(lang, domain.ArticleLanguage{
+		Language: "english",
+	})
+	lang = append(lang, domain.ArticleLanguage{
+		Language: "indonesia",
+	})
+	for _, v := range lang {
+		if err := m.DB.WithContext(ctx).Create(&v).Error; err != nil {
+			return err
+		}
 	}
 	return nil
 }
