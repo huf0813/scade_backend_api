@@ -11,7 +11,7 @@ type Article struct {
 	Title     string `gorm:"not_null" json:"title"`
 	Body      string `gorm:"not_null" json:"body"`
 	Thumbnail string `gorm:"not_null" json:"thumbnail"`
-	ArticleID uint
+	ArticleID uint   `json:"article_id"`
 }
 
 type ArticleRepository interface {
