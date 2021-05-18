@@ -22,6 +22,7 @@ func (cv *CustomValidator) Validate(i interface{}) error {
 func main() {
 	e := echo.New()
 	e.Validator = &CustomValidator{validator: validator.New()}
+
 	db, err := mysql.NewDriverMysql()
 	if err != nil {
 		panic(err)

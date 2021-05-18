@@ -26,7 +26,7 @@ func (ah *ArticleHandler) GetArticles(c echo.Context) error {
 	ctx := c.Request().Context()
 	res, err := ah.ArticleUseCase.GetArticles(ctx)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError,
+		return echo.NewHTTPError(http.StatusInternalServerError,
 			custom_response.NewCustomResponse(
 				false,
 				"failed to fetch articles, please try again later",
@@ -48,7 +48,7 @@ func (ah *ArticleHandler) GetArticlesBasedOnLanguage(c echo.Context) error {
 	lang := c.Param("lang")
 	res, err := ah.ArticleUseCase.GetArticlesBasedOnLanguage(ctx, lang)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError,
+		return echo.NewHTTPError(http.StatusInternalServerError,
 			custom_response.NewCustomResponse(
 				false,
 				err.Error(),
@@ -70,7 +70,7 @@ func (ah *ArticleHandler) GetArticlesBasedOnLanguageByID(c echo.Context) error {
 	lang := c.Param("language")
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
-		return c.JSON(http.StatusBadRequest,
+		return echo.NewHTTPError(http.StatusBadRequest,
 			custom_response.NewCustomResponse(
 				false,
 				err.Error(),
@@ -80,7 +80,7 @@ func (ah *ArticleHandler) GetArticlesBasedOnLanguageByID(c echo.Context) error {
 	}
 	res, err := ah.ArticleUseCase.GetArticlesBasedOnLanguageByID(ctx, lang, id)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError,
+		return echo.NewHTTPError(http.StatusInternalServerError,
 			custom_response.NewCustomResponse(
 				false,
 				err.Error(),
@@ -107,7 +107,7 @@ func (ah *ArticleHandler) CreateArticle(c echo.Context) error {
 	}
 	ctx := c.Request().Context()
 	if err := ah.ArticleUseCase.CreateArticle(ctx, a.Title, a.Body, a.Thumbnail, a.ArticleLanguageID); err != nil {
-		return c.JSON(http.StatusInternalServerError, custom_response.NewCustomResponse(
+		return echo.NewHTTPError(http.StatusInternalServerError, custom_response.NewCustomResponse(
 			false,
 			err.Error(),
 			nil),
