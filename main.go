@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/go-playground/validator"
 	"github.com/huf0813/scade_backend_api/infra/database/mysql"
 	"github.com/huf0813/scade_backend_api/routes"
 	"github.com/joho/godotenv"
@@ -10,9 +11,17 @@ import (
 	"time"
 )
 
+type CustomValidator struct {
+	validator *validator.Validate
+}
+
+func (cv *CustomValidator) Validate(i interface{}) error {
+	return cv.validator.Struct(i)
+}
+
 func main() {
 	e := echo.New()
-
+	e.Validator = &CustomValidator{validator: validator.New()}
 	db, err := mysql.NewDriverMysql()
 	if err != nil {
 		panic(err)

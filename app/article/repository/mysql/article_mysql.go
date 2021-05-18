@@ -2,6 +2,7 @@ package mysql
 
 import (
 	"context"
+	"errors"
 	"github.com/huf0813/scade_backend_api/domain"
 	"gorm.io/gorm"
 )
@@ -42,4 +43,21 @@ func (a *ArticleRepoMysql) GetArticlesBasedOnLanguageByID(ctx context.Context, l
 		return domain.Article{}, err
 	}
 	return article, nil
+}
+
+func (a *ArticleRepoMysql) CreateArticle(ctx context.Context, title, body, thumbnail string, articleLanguageID uint) error {
+	article := domain.Article{
+		Title:             title,
+		Body:              body,
+		Thumbnail:         thumbnail,
+		ArticleLanguageID: articleLanguageID,
+	}
+	result := a.DB.WithContext(ctx).Create(&article)
+	if err := result.Error; err != nil {
+		return err
+	}
+	if rows := result.RowsAffected; rows <= 0 {
+		return errors.New("failed to insert data, empty feedback")
+	}
+	return nil
 }

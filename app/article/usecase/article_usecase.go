@@ -53,3 +53,18 @@ func (a *ArticleUseCase) GetArticlesBasedOnLanguageByID(ctx context.Context, lan
 
 	return res, nil
 }
+
+func (a *ArticleUseCase) CreateArticle(ctx context.Context, title, body, thumbnail string, articleLanguageID uint) error {
+	ctx, cancel := context.WithTimeout(ctx, a.timeOut)
+	defer cancel()
+
+	if err := a.articleRepoMysql.CreateArticle(ctx,
+		title,
+		body,
+		thumbnail,
+		articleLanguageID); err != nil {
+		return err
+	}
+
+	return nil
+}

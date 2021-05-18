@@ -1,6 +1,7 @@
 package http
 
 import (
+	"github.com/go-playground/validator"
 	"github.com/huf0813/scade_backend_api/domain"
 	"github.com/huf0813/scade_backend_api/utils/custom_response"
 	"github.com/labstack/echo/v4"
@@ -10,6 +11,7 @@ import (
 
 type ArticleHandler struct {
 	ArticleUseCase domain.ArticleUseCase
+	validator      *validator.Validate
 }
 
 func NewArticleHandler(e *echo.Echo, auc domain.ArticleUseCase) {
@@ -17,6 +19,7 @@ func NewArticleHandler(e *echo.Echo, auc domain.ArticleUseCase) {
 	e.GET("/articles", handler.GetArticles)
 	e.GET("/articles/:language", handler.GetArticlesBasedOnLanguage)
 	e.GET("/articles/:language/:id", handler.GetArticlesBasedOnLanguageByID)
+	e.POST("/articles/create", handler.CreateArticle)
 }
 
 func (ah *ArticleHandler) GetArticles(c echo.Context) error {
@@ -91,5 +94,28 @@ func (ah *ArticleHandler) GetArticlesBasedOnLanguageByID(c echo.Context) error {
 			"fetch articles successfully",
 			res,
 		),
+	)
+}
+
+func (ah *ArticleHandler) CreateArticle(c echo.Context) error {
+	a := new(domain.ArticleRequest)
+	if err := c.Bind(a); err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+	if err := c.Validate(a); err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+	ctx := c.Request().Context()
+	if err := ah.ArticleUseCase.CreateArticle(ctx, a.Title, a.Body, a.Thumbnail, a.ArticleLanguageID); err != nil {
+		return c.JSON(http.StatusInternalServerError, custom_response.NewCustomResponse(
+			false,
+			err.Error(),
+			nil),
+		)
+	}
+	return c.JSON(http.StatusOK, custom_response.NewCustomResponse(
+		true,
+		"data created successfully",
+		nil),
 	)
 }
