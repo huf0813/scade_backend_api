@@ -17,9 +17,11 @@ type Article struct {
 type ArticleRepository interface {
 	GetArticles(ctx context.Context) ([]Article, error)
 	GetArticlesBasedOnLanguage(ctx context.Context, language string) ([]Article, error)
+	GetArticlesBasedOnLanguageByID(ctx context.Context, language string, articleID int) (Article, error)
 }
 
 type ArticleUseCase interface {
 	GetArticles(ctx context.Context) ([]Article, error)
 	GetArticlesBasedOnLanguage(ctx context.Context, language string) ([]Article, error)
+	GetArticlesBasedOnLanguageByID(ctx context.Context, language string, articleID int) (Article, error)
 }

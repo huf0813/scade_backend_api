@@ -41,3 +41,15 @@ func (a *ArticleUseCase) GetArticlesBasedOnLanguage(ctx context.Context, languag
 
 	return res, nil
 }
+
+func (a *ArticleUseCase) GetArticlesBasedOnLanguageByID(ctx context.Context, language string, articleID int) (domain.Article, error) {
+	ctx, cancel := context.WithTimeout(ctx, a.timeOut)
+	defer cancel()
+
+	res, err := a.articleRepoMysql.GetArticlesBasedOnLanguageByID(ctx, language, articleID)
+	if err != nil {
+		return domain.Article{}, err
+	}
+
+	return res, nil
+}

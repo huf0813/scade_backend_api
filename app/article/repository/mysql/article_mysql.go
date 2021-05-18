@@ -32,3 +32,14 @@ func (a *ArticleRepoMysql) GetArticlesBasedOnLanguage(ctx context.Context, langu
 	}
 	return articles, nil
 }
+
+func (a *ArticleRepoMysql) GetArticlesBasedOnLanguageByID(ctx context.Context, language string, articleID int) (domain.Article, error) {
+	var article domain.Article
+	if err := a.DB.WithContext(ctx).
+		Joins("JOIN article_languages ON articles.article_language_id = article_languages.id").
+		Where("article_languages.language = ?", language).
+		First(&article, articleID).Error; err != nil {
+		return domain.Article{}, err
+	}
+	return article, nil
+}
