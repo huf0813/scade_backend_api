@@ -7,13 +7,12 @@ import (
 	_articleLanguageHandler "github.com/huf0813/scade_backend_api/app/article_language/delivery/http"
 	_articleLanguageRepoMysql "github.com/huf0813/scade_backend_api/app/article_language/repository/mysql"
 	_articleLanguageUseCase "github.com/huf0813/scade_backend_api/app/article_language/usecase"
+	_ "github.com/huf0813/scade_backend_api/docs"
 	_migrationHandler "github.com/huf0813/scade_backend_api/migration/delivery/http"
 	_migrationRepoMysql "github.com/huf0813/scade_backend_api/migration/repository/mysql"
 	_migrationUseCase "github.com/huf0813/scade_backend_api/migration/usecase"
-
 	"github.com/huf0813/scade_backend_api/utils/custom_response"
 
-	_ "github.com/huf0813/scade_backend_api/docs"
 	"github.com/labstack/echo/v4"
 	echoSwagger "github.com/swaggo/echo-swagger"
 	"gorm.io/gorm"

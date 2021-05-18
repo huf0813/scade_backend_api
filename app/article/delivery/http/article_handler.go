@@ -22,6 +22,14 @@ func NewArticleHandler(e *echo.Echo, auc domain.ArticleUseCase) {
 	e.POST("/articles/create", handler.CreateArticle)
 }
 
+// HealthCheck godoc
+// @Summary Show the status of server.
+// @Description get the articles.
+// @Tags articles
+// @Accept */*
+// @Produce json
+// @Success 200 {object} map[string]interface{}
+// @Router /articles [get]
 func (ah *ArticleHandler) GetArticles(c echo.Context) error {
 	ctx := c.Request().Context()
 	res, err := ah.ArticleUseCase.GetArticles(ctx)
