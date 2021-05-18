@@ -1,13 +1,16 @@
 FROM golang:alpine as builder
 
-LABEL maintainer="SCADE Team"
+ENV GO111MODULE=on \
+    CGO_ENABLED=0 \
+    GOOS=linux \
+    GOARCH=amd64
 
 RUN apk update && apk add --no-cache git
 
 WORKDIR /app
 
-COPY go.mod go.sum ./
-
+COPY go.mod .
+COPY go.sum .
 RUN go mod download
 
 COPY . .
