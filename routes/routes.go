@@ -16,6 +16,7 @@ import (
 	_migrationRepoMysql "github.com/huf0813/scade_backend_api/migration/repository/mysql"
 	_migrationUseCase "github.com/huf0813/scade_backend_api/migration/usecase"
 	"github.com/huf0813/scade_backend_api/utils/custom_response"
+	"github.com/labstack/echo/v4/middleware"
 
 	"github.com/labstack/echo/v4"
 	echoSwagger "github.com/swaggo/echo-swagger"
@@ -32,7 +33,7 @@ func (cv *CustomValidator) Validate(i interface{}) error {
 	return cv.validator.Struct(i)
 }
 
-func NewRoutes(e *echo.Echo, db *gorm.DB, timeOut time.Duration) {
+func NewRoutes(e *echo.Echo, db *gorm.DB, timeOut time.Duration, authMiddleware middleware.JWTConfig) {
 	e.Validator = &CustomValidator{validator: validator.New()}
 
 	e.GET("/", func(context echo.Context) error {
@@ -54,9 +55,9 @@ func NewRoutes(e *echo.Echo, db *gorm.DB, timeOut time.Duration) {
 
 	articleLanguageRepoMysql := _articleLanguageRepoMysql.NewArticleLanguageRepoMysql(db)
 	articleLanguageUseCase := _articleLanguageUseCase.NewArticleLanguageUseCase(articleLanguageRepoMysql, timeOut)
-	_articleLanguageHandler.NewArticleLanguageHandler(e, articleLanguageUseCase)
+	_articleLanguageHandler.NewArticleLanguageHandler(e, articleLanguageUseCase, authMiddleware)
 
 	articleRepoMysql := _articleRepoMysql.NewArticleRepoMysql(db)
 	articleUseCase := _articleUseCase.NewArticleUseCase(articleRepoMysql, timeOut)
-	_articleHandler.NewArticleHandler(e, articleUseCase)
+	_articleHandler.NewArticleHandler(e, articleUseCase, authMiddleware)
 }

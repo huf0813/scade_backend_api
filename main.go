@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/huf0813/scade_backend_api/infra/database/mysql"
 	"github.com/huf0813/scade_backend_api/routes"
+	"github.com/huf0813/scade_backend_api/utils/auth"
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -27,12 +28,17 @@ func main() {
 	e.Use(middleware.Recover())
 	e.Use(middleware.CORS())
 
+	authMiddleware, err := auth.NewAuthMiddleware()
+	if err != nil {
+		panic(err)
+	}
+
 	db, err := mysql.NewDriverMysql()
 	if err != nil {
 		panic(err)
 	}
 	timeOut := 10 * time.Second
-	routes.NewRoutes(e, db, timeOut)
+	routes.NewRoutes(e, db, timeOut, authMiddleware)
 
 	if err := godotenv.Load(); err != nil {
 		panic(err)
