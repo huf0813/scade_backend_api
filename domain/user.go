@@ -29,7 +29,7 @@ type UserSignUpRequest struct {
 }
 
 type UserRepository interface {
-	SignIn(ctx context.Context, email, password string) error
+	GetUserByEmail(ctx context.Context, email string) (User, error)
 	SignUp(ctx context.Context, name, address, email, phone, password string) error
 }
 
