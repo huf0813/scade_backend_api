@@ -26,11 +26,24 @@ func (m *MigrationRepoMysql) Migrate(ctx context.Context) error {
 	if err := m.DB.
 		WithContext(ctx).
 		Migrator().
+		DropTable(&domain.User{}); err != nil {
+		return err
+	}
+	if err := m.DB.
+		WithContext(ctx).
+		Migrator().
 		DropTable(&domain.ArticleLanguage{}); err != nil {
 		return err
 	}
 
 	// layer one
+	if err := m.DB.
+		WithContext(ctx).
+		Set("gorm:table_options", "ENGINE=InnoDB").
+		Migrator().
+		CreateTable(&domain.User{}); err != nil {
+		return err
+	}
 	if err := m.DB.
 		WithContext(ctx).
 		Set("gorm:table_options", "ENGINE=InnoDB").
