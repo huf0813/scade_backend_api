@@ -16,17 +16,16 @@ type envMysql struct {
 	database string
 }
 
-func readMysqlEnv() (mysqlEnv envMysql, err error) {
+func readMysqlEnv() (mysql envMysql, err error) {
 	if err = godotenv.Load(); err != nil {
 		return envMysql{}, err
 	}
-	return envMysql{
-		host:     os.Getenv("MYSQL_DB_HOST"),
-		port:     os.Getenv("MYSQL_DB_PORT"),
-		username: os.Getenv("MYSQL_DB_USERNAME"),
-		password: os.Getenv("MYSQL_DB_PASSWORD"),
-		database: os.Getenv("MYSQL_DB_DATABASE"),
-	}, nil
+	mysql.host = os.Getenv("MYSQL_DB_HOST")
+	mysql.port = os.Getenv("MYSQL_DB_PORT")
+	mysql.username = os.Getenv("MYSQL_DB_USERNAME")
+	mysql.password = os.Getenv("MYSQL_DB_PASSWORD")
+	mysql.database = os.Getenv("MYSQL_DB_DATABASE")
+	return mysql, nil
 }
 
 func NewDriverMysql() (*gorm.DB, error) {
