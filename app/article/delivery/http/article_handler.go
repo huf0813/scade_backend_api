@@ -46,7 +46,7 @@ func (ah *ArticleHandler) GetArticles(c echo.Context) error {
 
 func (ah *ArticleHandler) GetArticlesBasedOnLanguage(c echo.Context) error {
 	ctx := c.Request().Context()
-	lang := c.Param("lang")
+	lang := c.Param("language")
 	res, err := ah.ArticleUseCase.GetArticlesBasedOnLanguage(ctx, lang)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
