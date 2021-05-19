@@ -4,6 +4,7 @@ import (
 	"github.com/huf0813/scade_backend_api/domain"
 	"github.com/huf0813/scade_backend_api/utils/custom_response"
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 	"net/http"
 	"strconv"
 )
@@ -12,12 +13,12 @@ type ArticleHandler struct {
 	ArticleUseCase domain.ArticleUseCase
 }
 
-func NewArticleHandler(e *echo.Echo, auc domain.ArticleUseCase) {
+func NewArticleHandler(e *echo.Echo, auc domain.ArticleUseCase, authMiddleware middleware.JWTConfig) {
 	handler := ArticleHandler{ArticleUseCase: auc}
 	e.GET("/articles", handler.GetArticles)
 	e.GET("/articles/:language", handler.GetArticlesBasedOnLanguage)
 	e.GET("/articles/:language/:id", handler.GetArticlesBasedOnLanguageByID)
-	e.POST("/articles/create", handler.CreateArticle)
+	e.POST("/articles/create", handler.CreateArticle, middleware.JWTWithConfig(authMiddleware))
 }
 
 // HealthCheck godoc
