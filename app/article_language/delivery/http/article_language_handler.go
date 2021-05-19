@@ -20,11 +20,7 @@ func (a *ArticleLanguageHandler) GetArticleLanguages(c echo.Context) error {
 	ctx := c.Request().Context()
 	res, err := a.ArticleLanguageUseCase.GetArticleLanguages(ctx)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, custom_response.NewCustomResponse(
-			false,
-			err.Error(),
-			nil),
-		)
+		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
 	return c.JSON(http.StatusOK, custom_response.NewCustomResponse(
 		true,
