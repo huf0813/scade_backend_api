@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"github.com/go-playground/validator"
 	"github.com/huf0813/scade_backend_api/infra/database/mysql"
 	"github.com/huf0813/scade_backend_api/routes"
 	"github.com/joho/godotenv"
@@ -11,14 +10,6 @@ import (
 	"os"
 	"time"
 )
-
-type CustomValidator struct {
-	validator *validator.Validate
-}
-
-func (cv *CustomValidator) Validate(i interface{}) error {
-	return cv.validator.Struct(i)
-}
 
 // @title Echo Swagger API
 // @version 1.0
@@ -35,7 +26,6 @@ func main() {
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
 	e.Use(middleware.CORS())
-	e.Validator = &CustomValidator{validator: validator.New()}
 
 	db, err := mysql.NewDriverMysql()
 	if err != nil {
