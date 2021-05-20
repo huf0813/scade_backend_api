@@ -57,7 +57,7 @@ func NewJWT(expirationTime time.Duration, email, role string) (string, error) {
 	return t, nil
 }
 
-func TokenExtraction(hashedToken string) (*domain.CustomToken, error) {
+func NewTokenExtraction(hashedToken string) (*domain.CustomToken, error) {
 	env, err := readTokenEnv()
 	if err != nil {
 		return nil, err

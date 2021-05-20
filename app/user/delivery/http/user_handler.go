@@ -70,7 +70,7 @@ func (u *UserHandler) SignUp(c echo.Context) error {
 func (u *UserHandler) Profile(c echo.Context) error {
 	ctx := c.Request().Context()
 	authorization := c.Request().Header.Get("Authorization")
-	claims, err := auth.TokenExtraction(authorization)
+	claims, err := auth.NewTokenExtraction(authorization)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
