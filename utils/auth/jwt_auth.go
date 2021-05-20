@@ -2,9 +2,11 @@ package auth
 
 import (
 	"github.com/dgrijalva/jwt-go"
+	"github.com/huf0813/scade_backend_api/domain"
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4/middleware"
 	"os"
+	"strings"
 	"time"
 )
 
@@ -33,13 +35,15 @@ func NewAuthMiddleware() (middleware.JWTConfig, error) {
 }
 
 func NewJWT(expirationTime time.Duration, email, role string) (string, error) {
-	token := jwt.New(jwt.SigningMethodHS256)
-
-	claims := token.Claims.(jwt.MapClaims)
-	claims["email"] = email
-	claims["role"] = role
 	exp := time.Now().Add(expirationTime).Unix()
-	claims["exp"] = exp
+	claims := &domain.CustomToken{
+		Email: email,
+		Role:  role,
+		StandardClaims: jwt.StandardClaims{
+			ExpiresAt: exp,
+		},
+	}
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
 	env, err := readTokenEnv()
 	if err != nil {
@@ -51,4 +55,28 @@ func NewJWT(expirationTime time.Duration, email, role string) (string, error) {
 		return "", err
 	}
 	return t, nil
+}
+
+func TokenExtraction(hashedToken string) (*domain.CustomToken, error) {
+	env, err := readTokenEnv()
+	if err != nil {
+		return nil, err
+	}
+
+	hashedToken = strings.Replace(hashedToken, "Bearer ", "", 1)
+	token, err := jwt.Parse(hashedToken, func(token *jwt.Token) (interface{}, error) {
+		result := []byte(env.secret)
+		return result, nil
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	tokenClaims := token.Claims
+	claims := tokenClaims.(jwt.MapClaims)
+	customToken := &domain.CustomToken{
+		Email: claims["email"].(string),
+		Role:  claims["role"].(string),
+	}
+	return customToken, nil
 }
