@@ -8,6 +8,9 @@ import (
 	_articleLanguageHandler "github.com/huf0813/scade_backend_api/app/article_language/delivery/http"
 	_articleLanguageRepoMysql "github.com/huf0813/scade_backend_api/app/article_language/repository/mysql"
 	_articleLanguageUseCase "github.com/huf0813/scade_backend_api/app/article_language/usecase"
+	_hospitalHandler "github.com/huf0813/scade_backend_api/app/hospital/delivery/http"
+	_hospitalRepoMysql "github.com/huf0813/scade_backend_api/app/hospital/repository/mysql"
+	_hospitalUseCase "github.com/huf0813/scade_backend_api/app/hospital/usecase"
 	_userHandler "github.com/huf0813/scade_backend_api/app/user/delivery/http"
 	_userRepoMysql "github.com/huf0813/scade_backend_api/app/user/repository/myql"
 	_userUseCase "github.com/huf0813/scade_backend_api/app/user/usecase"
@@ -48,6 +51,10 @@ func NewRoutes(e *echo.Echo, db *gorm.DB, timeOut time.Duration, authMiddleware 
 	migrationRepoMysql := _migrationRepoMysql.NewMigrationRepoMysql(db)
 	migrationUseCase := _migrationUseCase.NewMigrationUseCase(migrationRepoMysql, timeOut)
 	_migrationHandler.NewMigrationHandler(e, migrationUseCase)
+
+	hospitalRepoMysql := _hospitalRepoMysql.NewHospitalRepoMysql(db)
+	hospitalUseCase := _hospitalUseCase.NewHospitalUseCase(hospitalRepoMysql, timeOut)
+	_hospitalHandler.NewHospitalHandler(e, hospitalUseCase)
 
 	userRepoMysql := _userRepoMysql.NewUserRepoMysql(db)
 	userUseCase := _userUseCase.NewUserUseCase(userRepoMysql, timeOut)
