@@ -51,7 +51,7 @@ func NewRoutes(e *echo.Echo, db *gorm.DB, timeOut time.Duration, authMiddleware 
 
 	userRepoMysql := _userRepoMysql.NewUserRepoMysql(db)
 	userUseCase := _userUseCase.NewUserUseCase(userRepoMysql, timeOut)
-	_userHandler.NewUserHandler(e, userUseCase)
+	_userHandler.NewUserHandler(e, userUseCase, authMiddleware)
 
 	articleLanguageRepoMysql := _articleLanguageRepoMysql.NewArticleLanguageRepoMysql(db)
 	articleLanguageUseCase := _articleLanguageUseCase.NewArticleLanguageUseCase(articleLanguageRepoMysql, timeOut)
