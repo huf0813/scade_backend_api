@@ -62,3 +62,15 @@ func (u *UserUseCase) SignUp(ctx context.Context, name, address, email, phone, p
 
 	return nil
 }
+
+func (u *UserUseCase) Profile(ctx context.Context, email string) (domain.User, error) {
+	ctx, cancel := context.WithTimeout(ctx, u.timeOut)
+	defer cancel()
+
+	result, err := u.userRepoMysql.GetUserByEmail(ctx, email)
+	if err != nil {
+		return domain.User{}, err
+	}
+
+	return result, nil
+}

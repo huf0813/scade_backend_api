@@ -36,4 +36,5 @@ type UserRepository interface {
 type UserUseCase interface {
 	SignIn(ctx context.Context, email, password string, expiration int, timeType time.Duration) (string, error)
 	SignUp(ctx context.Context, name, address, email, phone, password string) error
+	Profile(ctx context.Context, email string) (User, error)
 }
