@@ -27,6 +27,9 @@ func (h *HospitalUseCase) GetHospitals(ctx context.Context) ([]domain.Hospital, 
 }
 
 func (h *HospitalUseCase) GetHospitalsByCity(ctx context.Context, city string) ([]domain.Hospital, error) {
+	ctx, cancel := context.WithTimeout(ctx, h.timeOut)
+	defer cancel()
+
 	result, err := h.hospitalRepoMysql.GetHospitalsByCity(ctx, city)
 	if err != nil {
 		return nil, err
@@ -35,6 +38,9 @@ func (h *HospitalUseCase) GetHospitalsByCity(ctx context.Context, city string) (
 }
 
 func (h *HospitalUseCase) GetHospitalByID(ctx context.Context, id int) (domain.Hospital, error) {
+	ctx, cancel := context.WithTimeout(ctx, h.timeOut)
+	defer cancel()
+
 	result, err := h.hospitalRepoMysql.GetHospitalByID(ctx, id)
 	if err != nil {
 		return domain.Hospital{}, err
