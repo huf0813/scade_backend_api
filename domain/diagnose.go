@@ -9,6 +9,7 @@ type Diagnose struct {
 	gorm.Model
 	CancerName string `gorm:"not_null"`
 	Position   string `gorm:"not_null"`
+	DiagnoseID uint   `json:"diagnose_id"`
 }
 
 type DiagnoseRepository interface {
