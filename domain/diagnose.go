@@ -12,11 +12,11 @@ type Diagnose struct {
 }
 
 type DiagnoseRepository interface {
-	GetDiagnoses(ctx context.Context, userID int) ([]Diagnose, error)
-	GetDiagnoseByID(ctx context.Context, userID, diagnoseID int) (Diagnose, error)
+	GetDiagnoses(ctx context.Context, email string) ([]Diagnose, error)
+	GetDiagnoseByID(ctx context.Context, email string, diagnoseID int) (Diagnose, error)
 }
 
 type DiagnoseUseCase interface {
-	GetDiagnoses(ctx context.Context, userID int) ([]Diagnose, error)
-	GetDiagnoseByID(ctx context.Context, userID, diagnoseID int) (Diagnose, error)
+	GetDiagnoses(ctx context.Context, email string) ([]Diagnose, error)
+	GetDiagnoseByID(ctx context.Context, email string, diagnoseID int) (Diagnose, error)
 }
