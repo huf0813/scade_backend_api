@@ -1,7 +1,6 @@
 package routes
 
 import (
-	"github.com/go-playground/validator"
 	_articleHandler "github.com/huf0813/scade_backend_api/app/article/delivery/http"
 	_articleRepoMysql "github.com/huf0813/scade_backend_api/app/article/repository/mysql"
 	_articleUseCase "github.com/huf0813/scade_backend_api/app/article/usecase"
@@ -14,16 +13,21 @@ import (
 	_hospitalHandler "github.com/huf0813/scade_backend_api/app/hospital/delivery/http"
 	_hospitalRepoMysql "github.com/huf0813/scade_backend_api/app/hospital/repository/mysql"
 	_hospitalUseCase "github.com/huf0813/scade_backend_api/app/hospital/usecase"
+	"github.com/huf0813/scade_backend_api/app/subscription/delivery/handler"
+	_subscriptionRepoMysql "github.com/huf0813/scade_backend_api/app/subscription/repository/mysql"
+	_subscriptionUseCase "github.com/huf0813/scade_backend_api/app/subscription/usecase"
 	_userHandler "github.com/huf0813/scade_backend_api/app/user/delivery/http"
 	_userRepoMysql "github.com/huf0813/scade_backend_api/app/user/repository/myql"
 	_userUseCase "github.com/huf0813/scade_backend_api/app/user/usecase"
-	_ "github.com/huf0813/scade_backend_api/docs"
 	_migrationHandler "github.com/huf0813/scade_backend_api/migration/delivery/http"
 	_migrationRepoMysql "github.com/huf0813/scade_backend_api/migration/repository/mysql"
 	_migrationUseCase "github.com/huf0813/scade_backend_api/migration/usecase"
 	"github.com/huf0813/scade_backend_api/utils/custom_response"
 	"github.com/labstack/echo/v4/middleware"
 
+	_ "github.com/huf0813/scade_backend_api/docs"
+
+	"github.com/go-playground/validator"
 	"github.com/labstack/echo/v4"
 	echoSwagger "github.com/swaggo/echo-swagger"
 	"gorm.io/gorm"
@@ -59,13 +63,17 @@ func NewRoutes(e *echo.Echo, db *gorm.DB, timeOut time.Duration, authMiddleware 
 	hospitalUseCase := _hospitalUseCase.NewHospitalUseCase(hospitalRepoMysql, timeOut)
 	_hospitalHandler.NewHospitalHandler(e, hospitalUseCase)
 
-	diagnoseRepoMysql := _diagnoseRepoMysql.NewDiagnoseRepoMysql(db)
-	diagnoseUseCase := _diagnoseUseCase.NewDiagnoseUseCase(diagnoseRepoMysql, timeOut)
-	_diagnoseHandler.NewDiagnoseHandler(e, diagnoseUseCase, authMiddleware)
+	subscriptionRepoMysql := _subscriptionRepoMysql.NewSubscriptionRepoMysql(db)
+	subscriptionUseCase := _subscriptionUseCase.NewSubscriptionUseCase(subscriptionRepoMysql, timeOut)
+	handler.NewSubscriptionHandler(e, subscriptionUseCase, authMiddleware)
 
 	userRepoMysql := _userRepoMysql.NewUserRepoMysql(db)
 	userUseCase := _userUseCase.NewUserUseCase(userRepoMysql, timeOut)
 	_userHandler.NewUserHandler(e, userUseCase, authMiddleware)
+
+	diagnoseRepoMysql := _diagnoseRepoMysql.NewDiagnoseRepoMysql(db)
+	diagnoseUseCase := _diagnoseUseCase.NewDiagnoseUseCase(diagnoseRepoMysql, userRepoMysql, timeOut)
+	_diagnoseHandler.NewDiagnoseHandler(e, diagnoseUseCase, authMiddleware)
 
 	articleLanguageRepoMysql := _articleLanguageRepoMysql.NewArticleLanguageRepoMysql(db)
 	articleLanguageUseCase := _articleLanguageUseCase.NewArticleLanguageUseCase(articleLanguageRepoMysql, timeOut)
