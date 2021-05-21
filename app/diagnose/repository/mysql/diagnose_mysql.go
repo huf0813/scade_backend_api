@@ -36,3 +36,20 @@ func (d *DiagnoseRepoMysql) GetDiagnoseByID(ctx context.Context, email string, d
 	}
 	return diagnose, nil
 }
+
+func (d *DiagnoseRepoMysql) CreateDiagnose(ctx context.Context, diagnose *domain.Diagnose) error {
+	create := &domain.Diagnose{
+		CancerName:  diagnose.CancerName,
+		CancerImage: diagnose.CancerImage,
+		Position:    diagnose.Position,
+		Price:       diagnose.Price,
+		UserID:      diagnose.UserID,
+	}
+	if err := d.DB.
+		WithContext(ctx).
+		Create(&create).
+		Error; err != nil {
+		return err
+	}
+	return nil
+}

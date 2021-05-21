@@ -18,6 +18,7 @@ func NewDiagnoseHandler(e *echo.Echo, d domain.DiagnoseUseCase, authMiddleware m
 	handler := &DiagnoseHandler{DiagnoseUseCase: d}
 	e.GET("/diagnoses", handler.GetDiagnoses, middleware.JWTWithConfig(authMiddleware))
 	e.GET("/diagnoses/:id", handler.GetDiagnoseByID, middleware.JWTWithConfig(authMiddleware))
+	e.POST("/diagnoses/create", handler.CreateDiagnose, middleware.JWTWithConfig(authMiddleware))
 }
 
 func (d *DiagnoseHandler) GetDiagnoses(c echo.Context) error {
@@ -58,5 +59,38 @@ func (d *DiagnoseHandler) GetDiagnoseByID(c echo.Context) error {
 		true,
 		"fetch history of diagnoses successfully",
 		result),
+	)
+}
+
+func (d *DiagnoseHandler) CreateDiagnose(c echo.Context) error {
+	cancerName := c.FormValue("cancer_name")
+	cancerPosition := c.FormValue("position")
+	cancerImage, err := c.FormFile("cancer_image")
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+	authorization := c.Request().Header.Get("Authorization")
+	token, err := auth.NewTokenExtraction(authorization)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+	ctx := c.Request().Context()
+
+	create := domain.DiagnoseRequest{
+		CancerName:  cancerName,
+		CancerImage: cancerImage.Filename,
+		Position:    cancerPosition,
+		Price:       10,
+		UserEmail:   token.Email,
+	}
+
+	if err := d.DiagnoseUseCase.CreateDiagnose(ctx, &create, cancerImage); err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+
+	return c.JSON(http.StatusOK, custom_response.NewCustomResponse(
+		true,
+		"data created successfully",
+		nil),
 	)
 }
