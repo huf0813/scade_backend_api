@@ -7,9 +7,9 @@ import (
 
 type Invoice struct {
 	gorm.Model
-	UserID     uint `gorm:"not_null"`
-	HospitalID uint `gorm:"not_null"`
-	DiagnoseID uint `gorm:"not_null"`
+	UserID     uint `gorm:"not_null" json:"user_id"`
+	HospitalID uint `gorm:"not_null" json:"hospital_id"`
+	DiagnoseID uint `gorm:"not_null" json:"diagnose_id"`
 }
 
 type InvoiceRepository interface {

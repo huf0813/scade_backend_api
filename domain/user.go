@@ -8,12 +8,13 @@ import (
 
 type User struct {
 	gorm.Model
-	Name      string     `gorm:"not_null" json:"name"`
-	Address   string     `gorm:"not_null" json:"address"`
-	Email     string     `gorm:"not_null;unique" json:"email"`
-	Phone     string     `gorm:"not_null;unique" json:"phone"`
-	Password  string     `gorm:"not_null" json:"password"`
-	Diagnoses []Diagnose `gorm:"foreignKey:DiagnoseID" json:"diagnoses"`
+	Name         string         `gorm:"not_null" json:"name"`
+	Address      string         `gorm:"not_null" json:"address"`
+	Email        string         `gorm:"not_null;unique" json:"email"`
+	Phone        string         `gorm:"not_null;unique" json:"phone"`
+	Password     string         `gorm:"not_null" json:"password"`
+	Diagnoses    []Diagnose     `gorm:"foreignKey:UserID" json:"diagnoses"`
+	Subscription []Subscription `gorm:"foreignKey:UserID" json:"subscription"`
 }
 
 type UserSignInRequest struct {

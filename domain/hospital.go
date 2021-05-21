@@ -7,11 +7,11 @@ import (
 
 type Hospital struct {
 	gorm.Model
-	Name     string `gorm:"not_null"`
-	Address  string `gorm:"not_null"`
-	Phone    string `gorm:"not_null"`
-	City     string `gorm:"not_null"`
-	Province string `gorm:"not_null"`
+	Name     string `gorm:"not_null" json:"name"`
+	Address  string `gorm:"not_null" json:"address"`
+	Phone    string `gorm:"not_null" json:"phone"`
+	City     string `gorm:"not_null" json:"city"`
+	Province string `gorm:"not_null" json:"province"`
 }
 
 type HospitalRepository interface {
