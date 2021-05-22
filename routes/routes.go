@@ -63,16 +63,22 @@ func NewRoutes(e *echo.Echo, db *gorm.DB, timeOut time.Duration, authMiddleware 
 	hospitalUseCase := _hospitalUseCase.NewHospitalUseCase(hospitalRepoMysql, timeOut)
 	_hospitalHandler.NewHospitalHandler(e, hospitalUseCase)
 
-	subscriptionRepoMysql := _subscriptionRepoMysql.NewSubscriptionRepoMysql(db)
-	subscriptionUseCase := _subscriptionUseCase.NewSubscriptionUseCase(subscriptionRepoMysql, timeOut)
-	handler.NewSubscriptionHandler(e, subscriptionUseCase, authMiddleware)
-
 	userRepoMysql := _userRepoMysql.NewUserRepoMysql(db)
 	userUseCase := _userUseCase.NewUserUseCase(userRepoMysql, timeOut)
 	_userHandler.NewUserHandler(e, userUseCase, authMiddleware)
 
+	subscriptionRepoMysql := _subscriptionRepoMysql.NewSubscriptionRepoMysql(db)
+	subscriptionUseCase := _subscriptionUseCase.NewSubscriptionUseCase(
+		subscriptionRepoMysql,
+		userRepoMysql,
+		timeOut)
+	handler.NewSubscriptionHandler(e, subscriptionUseCase, authMiddleware)
+
 	diagnoseRepoMysql := _diagnoseRepoMysql.NewDiagnoseRepoMysql(db)
-	diagnoseUseCase := _diagnoseUseCase.NewDiagnoseUseCase(diagnoseRepoMysql, userRepoMysql, timeOut)
+	diagnoseUseCase := _diagnoseUseCase.NewDiagnoseUseCase(
+		diagnoseRepoMysql,
+		userRepoMysql,
+		timeOut)
 	_diagnoseHandler.NewDiagnoseHandler(e, diagnoseUseCase, authMiddleware)
 
 	articleLanguageRepoMysql := _articleLanguageRepoMysql.NewArticleLanguageRepoMysql(db)

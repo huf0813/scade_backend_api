@@ -19,6 +19,7 @@ func (s SubscriptionRepoMysql) GetSubscription(ctx context.Context, email string
 	var subs []domain.Subscription
 	if err := s.DB.
 		WithContext(ctx).
+		Joins("JOIN users ON subscriptions.user_id = users.id").
 		Where("users.email = ?", email).
 		Find(&subs).Error; err != nil {
 		return nil, err
@@ -26,10 +27,13 @@ func (s SubscriptionRepoMysql) GetSubscription(ctx context.Context, email string
 	return subs, nil
 }
 
-func (s SubscriptionRepoMysql) GetSubscriptionByID(ctx context.Context, email string, subscriptionID int) (domain.Subscription, error) {
+func (s SubscriptionRepoMysql) GetSubscriptionByID(ctx context.Context,
+	email string,
+	subscriptionID int) (domain.Subscription, error) {
 	var subs domain.Subscription
 	if err := s.DB.
 		WithContext(ctx).
+		Joins("JOIN users ON subscriptions.user_id = users.id").
 		Where("users.email = ?", email).
 		First(&subs, subscriptionID).Error; err != nil {
 		return domain.Subscription{}, err
@@ -39,8 +43,9 @@ func (s SubscriptionRepoMysql) GetSubscriptionByID(ctx context.Context, email st
 
 func (s SubscriptionRepoMysql) CreateSubscriptionByUser(ctx context.Context, userID uint) error {
 	subs := domain.Subscription{
-		Price:    10,
-		FinishAt: time.Time{}.Add(2160 * time.Hour),
+		Price: 10,
+		// add subscription for 3 month
+		FinishAt: time.Now().Add(2160 * time.Hour),
 		UserID:   userID,
 	}
 	if err := s.DB.

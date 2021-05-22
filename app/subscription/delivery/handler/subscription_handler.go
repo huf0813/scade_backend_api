@@ -14,11 +14,19 @@ type SubscriptionHandler struct {
 	SubscriptionUseCase domain.SubscriptionUseCase
 }
 
-func NewSubscriptionHandler(e *echo.Echo, s domain.SubscriptionUseCase, authMiddleware middleware.JWTConfig) {
+func NewSubscriptionHandler(e *echo.Echo,
+	s domain.SubscriptionUseCase,
+	authMiddleware middleware.JWTConfig) {
 	handler := &SubscriptionHandler{SubscriptionUseCase: s}
-	e.GET("/subscription", handler.GetSubscriptions, middleware.JWTWithConfig(authMiddleware))
-	e.GET("/subscription/:id", handler.GetSubscriptionByID, middleware.JWTWithConfig(authMiddleware))
-	e.POST("/subscription/create", handler.GetSubscriptionByID, middleware.JWTWithConfig(authMiddleware))
+	e.GET("/subscriptions",
+		handler.GetSubscriptions,
+		middleware.JWTWithConfig(authMiddleware))
+	e.GET("/subscriptions/:id",
+		handler.GetSubscriptionByID,
+		middleware.JWTWithConfig(authMiddleware))
+	e.POST("/subscriptions/create",
+		handler.CreateSubscription,
+		middleware.JWTWithConfig(authMiddleware))
 }
 
 func (s *SubscriptionHandler) GetSubscriptions(c echo.Context) error {
@@ -28,10 +36,12 @@ func (s *SubscriptionHandler) GetSubscriptions(c echo.Context) error {
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadGateway, err.Error())
 	}
+
 	res, err := s.SubscriptionUseCase.GetSubscriptionByUser(ctx, token.Email)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
+
 	return c.JSON(http.StatusOK, custom_response.NewCustomResponse(
 		true,
 		"fetch data successfully",
@@ -44,17 +54,23 @@ func (s *SubscriptionHandler) GetSubscriptionByID(c echo.Context) error {
 	authHeader := c.Request().Header.Get("Authorization")
 	token, err := auth.NewTokenExtraction(authHeader)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusBadGateway, err.Error())
+		return echo.NewHTTPError(http.StatusBadGateway,
+			err.Error())
 	}
+
 	id := c.Param("id")
 	idInteger, err := strconv.Atoi(id)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusBadGateway, err.Error())
+		return echo.NewHTTPError(http.StatusBadGateway,
+			err.Error())
 	}
+
 	res, err := s.SubscriptionUseCase.GetSubscriptionByID(ctx, token.Email, idInteger)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+		return echo.NewHTTPError(http.StatusInternalServerError,
+			err.Error())
 	}
+
 	return c.JSON(http.StatusOK, custom_response.NewCustomResponse(
 		true,
 		"fetch data successfully",
@@ -68,12 +84,20 @@ func (s *SubscriptionHandler) CreateSubscription(c echo.Context) error {
 
 	token, err := auth.NewTokenExtraction(authHeader)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusBadGateway, err.Error())
+		return echo.NewHTTPError(
+			http.StatusBadGateway,
+			err.Error())
 	}
 
-	if err := s.SubscriptionUseCase.CreateSubscriptionByUser(ctx, token.Email); err != nil {
-		return err
+	if err := s.SubscriptionUseCase.CreateSubscriptionByUser(ctx,
+		token.Email); err != nil {
+		return echo.NewHTTPError(
+			http.StatusInternalServerError,
+			err.Error())
 	}
 
-	return nil
+	return c.JSON(http.StatusOK, custom_response.NewCustomResponse(
+		true,
+		"created data successfully",
+		nil))
 }

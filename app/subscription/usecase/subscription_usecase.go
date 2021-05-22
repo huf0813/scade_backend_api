@@ -13,9 +13,11 @@ type SubscriptionUseCase struct {
 }
 
 func NewSubscriptionUseCase(s domain.SubscriptionRepository,
+	u domain.UserRepository,
 	timeOut time.Duration) domain.SubscriptionUseCase {
 	return &SubscriptionUseCase{
 		subscriptionRepoMysql: s,
+		userRepoMysql:         u,
 		timeOut:               timeOut,
 	}
 }
