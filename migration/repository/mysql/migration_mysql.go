@@ -154,5 +154,17 @@ func (m *MigrationRepoMysql) Seed(ctx context.Context) error {
 		return err
 	}
 
+	hospital := domain.Hospital{
+		Name:     "RS Bagus",
+		Address:  "JL. Sigura",
+		Phone:    "0813",
+		City:     "Malang",
+		Province: "Jawa Timur",
+	}
+	if err := m.DB.WithContext(ctx).Create(&hospital).
+		Error; err != nil {
+		return err
+	}
+
 	return nil
 }
