@@ -1,4 +1,11 @@
-version: '3'
+version: '3.7'
+
+x-scade-assets:
+  &scade-assets
+  type: bind
+  source: ${APP_SOURCE}
+  target: ${APP_TARGET}
+
 services:
   app:
     env_file:
@@ -10,6 +17,8 @@ services:
     depends_on:
       - mysql_db
     restart: on-failure
+    volumes:
+      - *scade-assets
     networks:
       - scade_backend_server
 
@@ -29,6 +38,9 @@ services:
     restart: on-failure
     networks:
       - scade_backend_server
+
+volumes:
+  scade_storage:
 
 networks:
   scade_backend_server:
