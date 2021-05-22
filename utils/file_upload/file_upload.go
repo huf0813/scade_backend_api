@@ -9,12 +9,13 @@ import (
 	"os"
 )
 
-func NewFileUpload(base string, fileHeader *multipart.FileHeader) (string, error) {
-	randomUUID, err := uuid.NewUUID()
+func NewFileUpload(base string,
+	fileHeader *multipart.FileHeader) (string, error) {
+	unique, err := uuid.NewUUID()
 	if err != nil {
 		return "", err
 	}
-	fileHeader.Filename = fmt.Sprintf("%s_%s", randomUUID, fileHeader.Filename)
+	fileHeader.Filename = fmt.Sprintf("%s_%s", unique, fileHeader.Filename)
 
 	src, err := fileHeader.Open()
 	if err != nil {
@@ -27,8 +28,8 @@ func NewFileUpload(base string, fileHeader *multipart.FileHeader) (string, error
 		}
 	}(src)
 
-	destination := fmt.Sprintf("%s/%s", base, fileHeader.Filename)
-	dst, err := os.Create(destination)
+	path := fmt.Sprintf("%s/%s", base, fileHeader.Filename)
+	dst, err := os.Create(path)
 	if err != nil {
 		return "", err
 	}
@@ -43,5 +44,5 @@ func NewFileUpload(base string, fileHeader *multipart.FileHeader) (string, error
 		return "", err
 	}
 
-	return destination, nil
+	return fileHeader.Filename, nil
 }

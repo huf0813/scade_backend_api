@@ -16,9 +16,15 @@ type DiagnoseHandler struct {
 
 func NewDiagnoseHandler(e *echo.Echo, d domain.DiagnoseUseCase, authMiddleware middleware.JWTConfig) {
 	handler := &DiagnoseHandler{DiagnoseUseCase: d}
-	e.GET("/diagnoses", handler.GetDiagnoses, middleware.JWTWithConfig(authMiddleware))
-	e.GET("/diagnoses/:id", handler.GetDiagnoseByID, middleware.JWTWithConfig(authMiddleware))
-	e.POST("/diagnoses/create", handler.CreateDiagnose, middleware.JWTWithConfig(authMiddleware))
+	e.GET("/diagnoses",
+		handler.GetDiagnoses,
+		middleware.JWTWithConfig(authMiddleware))
+	e.GET("/diagnoses/:id",
+		handler.GetDiagnoseByID,
+		middleware.JWTWithConfig(authMiddleware))
+	e.POST("/diagnoses/create",
+		handler.CreateDiagnose,
+		middleware.JWTWithConfig(authMiddleware))
 }
 
 func (d *DiagnoseHandler) GetDiagnoses(c echo.Context) error {
