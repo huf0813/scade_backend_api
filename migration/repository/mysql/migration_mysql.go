@@ -3,6 +3,7 @@ package mysql
 import (
 	"context"
 	"github.com/huf0813/scade_backend_api/domain"
+	"github.com/huf0813/scade_backend_api/utils/security"
 	"gorm.io/gorm"
 )
 
@@ -111,7 +112,8 @@ func (m *MigrationRepoMysql) Seed(ctx context.Context) error {
 		Language: "indonesia",
 	})
 	for _, v := range lang {
-		if err := m.DB.WithContext(ctx).Create(&v).Error; err != nil {
+		if err := m.DB.WithContext(ctx).Create(&v).
+			Error; err != nil {
 			return err
 		}
 	}
@@ -130,9 +132,26 @@ func (m *MigrationRepoMysql) Seed(ctx context.Context) error {
 		ArticleLanguageID: 2,
 	})
 	for _, v := range articles {
-		if err := m.DB.WithContext(ctx).Create(&v).Error; err != nil {
+		if err := m.DB.WithContext(ctx).Create(&v).
+			Error; err != nil {
 			return err
 		}
+	}
+
+	pass, err := security.NewHashingValue("1234567890")
+	if err != nil {
+		return err
+	}
+	user := domain.User{
+		Name:     "Harun Ulum Fajar",
+		Address:  "Malang",
+		Email:    "harun@gmail.com",
+		Phone:    "081308130813",
+		Password: pass,
+	}
+	if err := m.DB.WithContext(ctx).Create(&user).
+		Error; err != nil {
+		return err
 	}
 
 	return nil
