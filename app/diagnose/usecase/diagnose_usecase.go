@@ -6,21 +6,25 @@ import (
 	"github.com/huf0813/scade_backend_api/domain"
 	"github.com/huf0813/scade_backend_api/utils/file_upload"
 	"mime/multipart"
-	"os"
 	"time"
 )
 
 type DiagnoseUseCase struct {
-	diagnoseRepoMysql domain.DiagnoseRepository
-	userRepository    domain.UserRepository
-	timeOut           time.Duration
+	diagnoseRepoMysql      domain.DiagnoseRepository
+	userRepository         domain.UserRepository
+	subscriptionRepository domain.SubscriptionRepository
+	timeOut                time.Duration
 }
 
-func NewDiagnoseUseCase(d domain.DiagnoseRepository, u domain.UserRepository, timeOut time.Duration) domain.DiagnoseUseCase {
+func NewDiagnoseUseCase(d domain.DiagnoseRepository,
+	u domain.UserRepository,
+	s domain.SubscriptionRepository,
+	timeOut time.Duration) domain.DiagnoseUseCase {
 	return &DiagnoseUseCase{
-		diagnoseRepoMysql: d,
-		userRepository:    u,
-		timeOut:           timeOut,
+		diagnoseRepoMysql:      d,
+		userRepository:         u,
+		subscriptionRepository: s,
+		timeOut:                timeOut,
 	}
 }
 
@@ -57,24 +61,30 @@ func (d *DiagnoseUseCase) CreateDiagnose(ctx context.Context,
 	defer cancel()
 
 	path := fmt.Sprintf("%s/%s", "assets", "skin_image")
-	result, err := file_upload.NewFileUpload(path, fileHeader)
+	filename, err := file_upload.NewFileUpload(path, fileHeader)
 	if err != nil {
 		return err
 	}
 
 	user, err := d.userRepository.GetUserByEmail(ctx, diagnose.UserEmail)
 	if err != nil {
-		if err := os.Remove(result); err != nil {
-			return err
-		}
 		return err
+	}
+
+	price := 0
+	isActiveSubscription, err := d.subscriptionRepository.CheckSubscription(ctx, user.ID)
+	if err != nil {
+		return err
+	}
+	if !isActiveSubscription {
+		price = diagnose.Price
 	}
 
 	create := domain.Diagnose{
 		CancerName:  diagnose.CancerName,
-		CancerImage: fileHeader.Filename,
+		CancerImage: filename,
 		Position:    diagnose.Position,
-		Price:       diagnose.Price,
+		Price:       price,
 		UserID:      user.ID,
 	}
 	if err := d.diagnoseRepoMysql.CreateDiagnose(ctx, &create); err != nil {

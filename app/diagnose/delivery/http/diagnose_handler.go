@@ -83,15 +83,14 @@ func (d *DiagnoseHandler) CreateDiagnose(c echo.Context) error {
 	ctx := c.Request().Context()
 
 	create := domain.DiagnoseRequest{
-		CancerName:  cancerName,
-		CancerImage: cancerImage.Filename,
-		Position:    cancerPosition,
-		Price:       10,
-		UserEmail:   token.Email,
+		CancerName: cancerName,
+		Position:   cancerPosition,
+		Price:      10,
+		UserEmail:  token.Email,
 	}
 
 	if err := d.DiagnoseUseCase.CreateDiagnose(ctx, &create, cancerImage); err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
 
 	return c.JSON(http.StatusOK, custom_response.NewCustomResponse(

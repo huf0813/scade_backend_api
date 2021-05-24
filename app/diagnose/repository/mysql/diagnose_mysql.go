@@ -2,6 +2,7 @@ package mysql
 
 import (
 	"context"
+	"errors"
 	"github.com/huf0813/scade_backend_api/domain"
 	"gorm.io/gorm"
 )
@@ -38,18 +39,21 @@ func (d *DiagnoseRepoMysql) GetDiagnoseByID(ctx context.Context, email string, d
 }
 
 func (d *DiagnoseRepoMysql) CreateDiagnose(ctx context.Context, diagnose *domain.Diagnose) error {
-	create := &domain.Diagnose{
+	create := domain.Diagnose{
 		CancerName:  diagnose.CancerName,
 		CancerImage: diagnose.CancerImage,
 		Position:    diagnose.Position,
 		Price:       diagnose.Price,
 		UserID:      diagnose.UserID,
 	}
-	if err := d.DB.
+	result := d.DB.
 		WithContext(ctx).
-		Create(&create).
-		Error; err != nil {
+		Create(&create)
+	if err := result.Error; err != nil {
 		return err
+	}
+	if rows := result.RowsAffected; rows <= 0 {
+		return errors.New("failed to insert data, empty feedback")
 	}
 	return nil
 }
