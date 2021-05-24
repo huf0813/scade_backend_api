@@ -15,7 +15,7 @@ func NewSubscriptionRepoMysql(db *gorm.DB) domain.SubscriptionRepository {
 	return &SubscriptionRepoMysql{DB: db}
 }
 
-func (s SubscriptionRepoMysql) GetSubscription(ctx context.Context, email string) ([]domain.Subscription, error) {
+func (s *SubscriptionRepoMysql) GetSubscription(ctx context.Context, email string) ([]domain.Subscription, error) {
 	var subs []domain.Subscription
 	if err := s.DB.
 		WithContext(ctx).
@@ -27,7 +27,7 @@ func (s SubscriptionRepoMysql) GetSubscription(ctx context.Context, email string
 	return subs, nil
 }
 
-func (s SubscriptionRepoMysql) GetSubscriptionByID(ctx context.Context,
+func (s *SubscriptionRepoMysql) GetSubscriptionByID(ctx context.Context,
 	email string,
 	subscriptionID int) (domain.Subscription, error) {
 	var subs domain.Subscription
@@ -41,7 +41,7 @@ func (s SubscriptionRepoMysql) GetSubscriptionByID(ctx context.Context,
 	return subs, nil
 }
 
-func (s SubscriptionRepoMysql) CreateSubscriptionByUser(ctx context.Context, userID uint) error {
+func (s *SubscriptionRepoMysql) CreateSubscriptionByUser(ctx context.Context, userID uint) error {
 	subs := domain.Subscription{
 		Price: 10,
 		// add subscription for 3 month
@@ -54,4 +54,20 @@ func (s SubscriptionRepoMysql) CreateSubscriptionByUser(ctx context.Context, use
 		return err
 	}
 	return nil
+}
+
+func (s *SubscriptionRepoMysql) CheckSubscription(ctx context.Context, userID uint) (bool, error) {
+	var count int64
+	if err := s.DB.WithContext(ctx).
+		Model(domain.Subscription{}).
+		Where("user_id = ?", userID).
+		Where("now() < finish_at").
+		Count(&count).Error; err != nil {
+		return false, err
+	}
+	if count > 0 {
+		return true, nil
+	} else {
+		return false, nil
+	}
 }

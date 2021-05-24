@@ -17,6 +17,7 @@ type SubscriptionRepository interface {
 	GetSubscription(ctx context.Context, email string) ([]Subscription, error)
 	GetSubscriptionByID(ctx context.Context, email string, subscriptionID int) (Subscription, error)
 	CreateSubscriptionByUser(ctx context.Context, email uint) error
+	CheckSubscription(ctx context.Context, userID uint) (bool, error)
 }
 
 type SubscriptionUseCase interface {
