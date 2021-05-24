@@ -40,7 +40,7 @@ func (d *DiagnoseUseCase) GetDiagnoses(ctx context.Context, email string) ([]dom
 	return result, nil
 }
 
-func (d *DiagnoseUseCase) GetDiagnoseByID(ctx context.Context, email string, diagnoseID int) (
+func (d *DiagnoseUseCase) GetDiagnoseByID(ctx context.Context, email string, diagnoseID uint) (
 	domain.Diagnose,
 	error) {
 	ctx, cancel := context.WithTimeout(ctx, d.timeOut)

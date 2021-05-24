@@ -26,10 +26,11 @@ func (d *DiagnoseRepoMysql) GetDiagnoses(ctx context.Context, email string) ([]d
 	return diagnoses, nil
 }
 
-func (d *DiagnoseRepoMysql) GetDiagnoseByID(ctx context.Context, email string, diagnoseID int) (domain.Diagnose, error) {
+func (d *DiagnoseRepoMysql) GetDiagnoseByID(ctx context.Context, email string, diagnoseID uint) (domain.Diagnose, error) {
 	var diagnose domain.Diagnose
 	if err := d.DB.
 		WithContext(ctx).
+		Joins("JOIN users ON diagnoses.user_id = users.id").
 		Where("users.email = ?", email).
 		Where("diagnoses.id = ?", diagnoseID).
 		Find(&diagnose).Error; err != nil {

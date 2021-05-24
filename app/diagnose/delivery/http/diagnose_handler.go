@@ -57,7 +57,7 @@ func (d *DiagnoseHandler) GetDiagnoseByID(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 	ctx := c.Request().Context()
-	result, err := d.DiagnoseUseCase.GetDiagnoseByID(ctx, token.Email, idInteger)
+	result, err := d.DiagnoseUseCase.GetDiagnoseByID(ctx, token.Email, uint(idInteger))
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
