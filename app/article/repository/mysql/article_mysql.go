@@ -52,7 +52,9 @@ func (a *ArticleRepoMysql) CreateArticle(ctx context.Context, title, body, thumb
 		Thumbnail:         thumbnail,
 		ArticleLanguageID: articleLanguageID,
 	}
-	result := a.DB.WithContext(ctx).Create(&article)
+	result := a.DB.
+		WithContext(ctx).
+		Create(&article)
 	if err := result.Error; err != nil {
 		return err
 	}
