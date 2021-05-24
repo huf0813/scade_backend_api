@@ -78,11 +78,14 @@ func NewRoutes(e *echo.Echo, db *gorm.DB, timeOut time.Duration, authMiddleware 
 	diagnoseUseCase := _diagnoseUseCase.NewDiagnoseUseCase(
 		diagnoseRepoMysql,
 		userRepoMysql,
+		subscriptionRepoMysql,
 		timeOut)
 	_diagnoseHandler.NewDiagnoseHandler(e, diagnoseUseCase, authMiddleware)
 
 	articleLanguageRepoMysql := _articleLanguageRepoMysql.NewArticleLanguageRepoMysql(db)
-	articleLanguageUseCase := _articleLanguageUseCase.NewArticleLanguageUseCase(articleLanguageRepoMysql, timeOut)
+	articleLanguageUseCase := _articleLanguageUseCase.NewArticleLanguageUseCase(
+		articleLanguageRepoMysql,
+		timeOut)
 	_articleLanguageHandler.NewArticleLanguageHandler(e, articleLanguageUseCase, authMiddleware)
 
 	articleRepoMysql := _articleRepoMysql.NewArticleRepoMysql(db)
