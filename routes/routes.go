@@ -13,6 +13,9 @@ import (
 	_hospitalHandler "github.com/huf0813/scade_backend_api/app/hospital/delivery/http"
 	_hospitalRepoMysql "github.com/huf0813/scade_backend_api/app/hospital/repository/mysql"
 	_hospitalUseCase "github.com/huf0813/scade_backend_api/app/hospital/usecase"
+	_invoiceHandler "github.com/huf0813/scade_backend_api/app/invoice/delivery/http"
+	_invoiceRepoMysql "github.com/huf0813/scade_backend_api/app/invoice/repository/mysql"
+	_invoiceUseCase "github.com/huf0813/scade_backend_api/app/invoice/usecase"
 	"github.com/huf0813/scade_backend_api/app/subscription/delivery/handler"
 	_subscriptionRepoMysql "github.com/huf0813/scade_backend_api/app/subscription/repository/mysql"
 	_subscriptionUseCase "github.com/huf0813/scade_backend_api/app/subscription/usecase"
@@ -71,7 +74,8 @@ func NewRoutes(e *echo.Echo, db *gorm.DB, timeOut time.Duration, authMiddleware 
 	subscriptionUseCase := _subscriptionUseCase.NewSubscriptionUseCase(
 		subscriptionRepoMysql,
 		userRepoMysql,
-		timeOut)
+		timeOut,
+	)
 	handler.NewSubscriptionHandler(e, subscriptionUseCase, authMiddleware)
 
 	diagnoseRepoMysql := _diagnoseRepoMysql.NewDiagnoseRepoMysql(db)
@@ -79,13 +83,24 @@ func NewRoutes(e *echo.Echo, db *gorm.DB, timeOut time.Duration, authMiddleware 
 		diagnoseRepoMysql,
 		userRepoMysql,
 		subscriptionRepoMysql,
-		timeOut)
+		timeOut,
+	)
 	_diagnoseHandler.NewDiagnoseHandler(e, diagnoseUseCase, authMiddleware)
+
+	invoiceRepoMysql := _invoiceRepoMysql.NewInvoiceRepoMysql(db)
+	invoiceUseCase := _invoiceUseCase.NewInvoiceUseCase(
+		invoiceRepoMysql,
+		userRepoMysql,
+		diagnoseRepoMysql,
+		timeOut,
+	)
+	_invoiceHandler.NewInvoiceHandler(e, invoiceUseCase, authMiddleware)
 
 	articleLanguageRepoMysql := _articleLanguageRepoMysql.NewArticleLanguageRepoMysql(db)
 	articleLanguageUseCase := _articleLanguageUseCase.NewArticleLanguageUseCase(
 		articleLanguageRepoMysql,
-		timeOut)
+		timeOut,
+	)
 	_articleLanguageHandler.NewArticleLanguageHandler(e, articleLanguageUseCase, authMiddleware)
 
 	articleRepoMysql := _articleRepoMysql.NewArticleRepoMysql(db)
