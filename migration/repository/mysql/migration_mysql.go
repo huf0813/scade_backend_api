@@ -16,6 +16,13 @@ func NewMigrationRepoMysql(conn *gorm.DB) domain.MigrationRepository {
 }
 
 func (m *MigrationRepoMysql) Migrate(ctx context.Context) error {
+	// layer three
+	if err := m.DB.
+		WithContext(ctx).
+		Migrator().
+		DropTable(&domain.Invoice{}); err != nil {
+		return err
+	}
 	// layer two
 	if err := m.DB.
 		WithContext(ctx).
@@ -98,6 +105,15 @@ func (m *MigrationRepoMysql) Migrate(ctx context.Context) error {
 		Set("gorm:table_options", "ENGINE=InnoDB").
 		Migrator().
 		CreateTable(&domain.Subscription{}); err != nil {
+		return err
+	}
+
+	// layer three
+	if err := m.DB.
+		WithContext(ctx).
+		Set("gorm:table_options", "ENGINE=InnoDB").
+		Migrator().
+		CreateTable(&domain.Invoice{}); err != nil {
 		return err
 	}
 	return nil
