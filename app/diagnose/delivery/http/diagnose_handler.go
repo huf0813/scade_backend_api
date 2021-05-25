@@ -89,13 +89,14 @@ func (d *DiagnoseHandler) CreateDiagnose(c echo.Context) error {
 		UserEmail:  token.Email,
 	}
 
-	if err := d.DiagnoseUseCase.CreateDiagnose(ctx, &create, cancerImage); err != nil {
+	lastID, err := d.DiagnoseUseCase.CreateDiagnose(ctx, &create, cancerImage)
+	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
 
 	return c.JSON(http.StatusOK, custom_response.NewCustomResponse(
 		true,
 		"data created successfully",
-		nil),
+		lastID),
 	)
 }

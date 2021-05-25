@@ -27,7 +27,7 @@ type DiagnoseRequest struct {
 type DiagnoseRepository interface {
 	GetDiagnoses(ctx context.Context, email string) ([]Diagnose, error)
 	GetDiagnoseByID(ctx context.Context, email string, diagnoseID uint) (Diagnose, error)
-	CreateDiagnose(ctx context.Context, diagnose *Diagnose) error
+	CreateDiagnose(ctx context.Context, diagnose *Diagnose) (uint, error)
 }
 
 type DiagnoseUseCase interface {
@@ -35,5 +35,5 @@ type DiagnoseUseCase interface {
 	GetDiagnoseByID(ctx context.Context, email string, diagnoseID uint) (Diagnose, error)
 	CreateDiagnose(ctx context.Context,
 		diagnose *DiagnoseRequest,
-		fileHeader *multipart.FileHeader) error
+		fileHeader *multipart.FileHeader) (uint, error)
 }

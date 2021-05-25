@@ -56,25 +56,25 @@ func (d *DiagnoseUseCase) GetDiagnoseByID(ctx context.Context, email string, dia
 
 func (d *DiagnoseUseCase) CreateDiagnose(ctx context.Context,
 	diagnose *domain.DiagnoseRequest,
-	fileHeader *multipart.FileHeader) error {
+	fileHeader *multipart.FileHeader) (uint, error) {
 	ctx, cancel := context.WithTimeout(ctx, d.timeOut)
 	defer cancel()
 
 	path := fmt.Sprintf("%s/%s", "assets", "skin_image")
 	filename, err := file_upload.NewFileUpload(path, fileHeader)
 	if err != nil {
-		return err
+		return 0, err
 	}
 
 	user, err := d.userRepository.GetUserByEmail(ctx, diagnose.UserEmail)
 	if err != nil {
-		return err
+		return 0, err
 	}
 
 	price := 0
 	isActiveSubscription, err := d.subscriptionRepository.CheckSubscription(ctx, user.ID)
 	if err != nil {
-		return err
+		return 0, err
 	}
 	if !isActiveSubscription {
 		price = diagnose.Price
@@ -87,9 +87,10 @@ func (d *DiagnoseUseCase) CreateDiagnose(ctx context.Context,
 		Price:       price,
 		UserID:      user.ID,
 	}
-	if err := d.diagnoseRepoMysql.CreateDiagnose(ctx, &create); err != nil {
-		return err
+	lastID, err := d.diagnoseRepoMysql.CreateDiagnose(ctx, &create)
+	if err != nil {
+		return 0, err
 	}
 
-	return nil
+	return lastID, nil
 }

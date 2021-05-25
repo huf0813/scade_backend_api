@@ -19,6 +19,7 @@ func (d *DiagnoseRepoMysql) GetDiagnoses(ctx context.Context, email string) ([]d
 	var diagnoses []domain.Diagnose
 	if err := d.DB.
 		WithContext(ctx).
+		Joins("JOIN users ON diagnoses.user_id = users.id").
 		Where("users.email = ?", email).
 		Find(&diagnoses).Error; err != nil {
 		return nil, err
@@ -39,7 +40,7 @@ func (d *DiagnoseRepoMysql) GetDiagnoseByID(ctx context.Context, email string, d
 	return diagnose, nil
 }
 
-func (d *DiagnoseRepoMysql) CreateDiagnose(ctx context.Context, diagnose *domain.Diagnose) error {
+func (d *DiagnoseRepoMysql) CreateDiagnose(ctx context.Context, diagnose *domain.Diagnose) (uint, error) {
 	create := domain.Diagnose{
 		CancerName:  diagnose.CancerName,
 		CancerImage: diagnose.CancerImage,
@@ -47,14 +48,17 @@ func (d *DiagnoseRepoMysql) CreateDiagnose(ctx context.Context, diagnose *domain
 		Price:       diagnose.Price,
 		UserID:      diagnose.UserID,
 	}
+
 	result := d.DB.
 		WithContext(ctx).
 		Create(&create)
+	lastID := create.ID
 	if err := result.Error; err != nil {
-		return err
+		return 0, err
 	}
-	if rows := result.RowsAffected; rows <= 0 {
-		return errors.New("failed to insert data, empty feedback")
+	rows := result.RowsAffected
+	if rows <= 0 {
+		return 0, errors.New("failed to insert data, empty feedback")
 	}
-	return nil
+	return lastID, nil
 }
