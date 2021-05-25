@@ -15,7 +15,7 @@ type HospitalHandler struct {
 func NewHospitalHandler(e *echo.Echo, h domain.HospitalUseCase) {
 	handler := HospitalHandler{HospitalUseCase: h}
 	e.GET("/hospitals", handler.GetHospitals)
-	e.GET("/hospitals/:city", handler.GetHospitalsByCity)
+	e.GET("/hospitals/search", handler.GetHospitalsByCity)
 	e.GET("/hospitals/:id", handler.GetHospitalByID)
 }
 
@@ -33,7 +33,7 @@ func (h *HospitalHandler) GetHospitals(c echo.Context) error {
 }
 
 func (h *HospitalHandler) GetHospitalsByCity(c echo.Context) error {
-	city := c.Param("city")
+	city := c.QueryParam("city")
 	ctx := c.Request().Context()
 	result, err := h.HospitalUseCase.GetHospitalsByCity(ctx, city)
 	if err != nil {
