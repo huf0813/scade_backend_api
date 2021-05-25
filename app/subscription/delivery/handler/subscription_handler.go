@@ -21,6 +21,9 @@ func NewSubscriptionHandler(e *echo.Echo,
 	e.GET("/subscriptions",
 		handler.GetSubscriptions,
 		middleware.JWTWithConfig(authMiddleware))
+	e.GET("/subscriptions/is_active",
+		handler.CheckSubscriptions,
+		middleware.JWTWithConfig(authMiddleware))
 	e.GET("/subscriptions/:id",
 		handler.GetSubscriptionByID,
 		middleware.JWTWithConfig(authMiddleware))
@@ -100,4 +103,27 @@ func (s *SubscriptionHandler) CreateSubscription(c echo.Context) error {
 		true,
 		"created data successfully",
 		nil))
+}
+
+func (s *SubscriptionHandler) CheckSubscriptions(c echo.Context) error {
+	authHeader := c.Request().Header.Get("Authorization")
+
+	token, err := auth.NewTokenExtraction(authHeader)
+	if err != nil {
+		return echo.NewHTTPError(
+			http.StatusBadGateway,
+			err.Error())
+	}
+
+	ctx := c.Request().Context()
+	result, err := s.SubscriptionUseCase.CheckActiveSubscription(ctx, token.Email)
+	if err != nil {
+		return echo.NewHTTPError(
+			http.StatusInternalServerError,
+			err.Error())
+	}
+	return c.JSON(http.StatusOK, custom_response.NewCustomResponse(
+		true,
+		"Get status subscription successfully",
+		result))
 }

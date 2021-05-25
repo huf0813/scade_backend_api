@@ -57,3 +57,20 @@ func (s *SubscriptionUseCase) CreateSubscriptionByUser(ctx context.Context, emai
 
 	return nil
 }
+
+func (s *SubscriptionUseCase) CheckActiveSubscription(ctx context.Context, email string) (bool, error) {
+	ctx, cancel := context.WithTimeout(ctx, s.timeOut)
+	defer cancel()
+
+	user, err := s.userRepoMysql.GetUserByEmail(ctx, email)
+	if err != nil {
+		return false, err
+	}
+
+	isActive, err := s.subscriptionRepoMysql.CheckSubscription(ctx, user.ID)
+	if err != nil {
+		return false, err
+	}
+
+	return isActive, nil
+}

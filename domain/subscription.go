@@ -24,4 +24,5 @@ type SubscriptionUseCase interface {
 	GetSubscriptionByUser(ctx context.Context, email string) ([]Subscription, error)
 	GetSubscriptionByID(ctx context.Context, email string, subscriptionID int) (Subscription, error)
 	CreateSubscriptionByUser(ctx context.Context, email string) error
+	CheckActiveSubscription(ctx context.Context, email string) (bool, error)
 }
