@@ -1,6 +1,7 @@
 package http
 
 import (
+	"errors"
 	"github.com/huf0813/scade_backend_api/domain"
 	"github.com/huf0813/scade_backend_api/utils/auth"
 	"github.com/huf0813/scade_backend_api/utils/custom_response"
@@ -14,13 +15,15 @@ type InvoiceHandler struct {
 	InvoiceUseCase domain.InvoiceUseCase
 }
 
-func NewInvoiceHandler(e *echo.Echo, i domain.InvoiceUseCase, authMiddleware middleware.JWTConfig) {
+func NewInvoiceHandler(e *echo.Echo,
+	i domain.InvoiceUseCase,
+	authMiddleware middleware.JWTConfig) {
 	handler := InvoiceHandler{InvoiceUseCase: i}
 	e.GET("/invoices",
 		handler.GetInvoices,
 		middleware.JWTWithConfig(authMiddleware))
 	e.GET("/invoices/:id",
-		handler.GetInvoices,
+		handler.GetInvoiceByID,
 		middleware.JWTWithConfig(authMiddleware))
 	e.POST("/invoices/create",
 		handler.CreateInvoice,
@@ -61,6 +64,12 @@ func (i *InvoiceHandler) GetInvoiceByID(c echo.Context) error {
 
 	ctx := c.Request().Context()
 	res, err := i.InvoiceUseCase.GetInvoiceByID(ctx, idInteger, token.Email)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+	}
+	if res.HospitalID == 0 || res.DiagnoseID == 0 {
+		return echo.NewHTTPError(http.StatusInternalServerError, errors.New("failed"))
+	}
 	return c.JSON(http.StatusOK, custom_response.NewCustomResponse(
 		true,
 		"fetch invoice by id successfully",

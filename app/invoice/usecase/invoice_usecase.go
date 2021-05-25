@@ -60,7 +60,6 @@ func (i *InvoiceUseCase) GetInvoiceByID(ctx context.Context,
 	if err != nil {
 		return domain.Invoice{}, err
 	}
-
 	return result, nil
 }
 

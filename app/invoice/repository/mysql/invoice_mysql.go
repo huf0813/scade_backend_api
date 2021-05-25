@@ -21,7 +21,8 @@ func (i *InvoiceRepoMysql) GetInvoices(ctx context.Context,
 
 	if err := i.DB.
 		WithContext(ctx).
-		Where("user_id = ?", userID).
+		Joins("JOIN diagnoses ON diagnoses.id = invoices.diagnose_id").
+		Where("diagnoses.user_id = ?", userID).
 		Find(&invoices).Error; err != nil {
 		return nil, err
 	}
@@ -37,7 +38,8 @@ func (i *InvoiceRepoMysql) GetInvoiceByID(ctx context.Context,
 
 	if err := i.DB.
 		WithContext(ctx).
-		Where("user_id = ?", userID).
+		Joins("JOIN diagnoses ON diagnoses.id = invoices.diagnose_id").
+		Where("diagnoses.user_id = ?", userID).
 		First(&invoice, invoiceID).Error; err != nil {
 		return domain.Invoice{}, err
 	}
