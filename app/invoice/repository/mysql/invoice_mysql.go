@@ -15,15 +15,18 @@ func NewInvoiceRepoMysql(db *gorm.DB) domain.InvoiceRepository {
 }
 
 func (i *InvoiceRepoMysql) GetInvoices(ctx context.Context,
-	userID uint) ([]domain.Invoice,
+	userID uint) ([]domain.InvoiceResponse,
 	error) {
-	var invoices []domain.Invoice
+	var invoices []domain.InvoiceResponse
 
 	if err := i.DB.
 		WithContext(ctx).
+		Model(&domain.Invoice{}).
+		Select("invoices.id as invoice_id, hospitals.name as hospital_name, hospitals.address as hospital_address, hospitals.phone as hospital_phone, hospitals.city as hospital_city, hospitals.province as hospital_province, diagnoses.cancer_name, diagnoses.cancer_image, diagnoses.position as cancer_position").
 		Joins("JOIN diagnoses ON diagnoses.id = invoices.diagnose_id").
+		Joins("JOIN hospitals ON hospitals.id = invoices.hospital_id").
 		Where("diagnoses.user_id = ?", userID).
-		Find(&invoices).Error; err != nil {
+		Scan(&invoices).Error; err != nil {
 		return nil, err
 	}
 
@@ -32,16 +35,20 @@ func (i *InvoiceRepoMysql) GetInvoices(ctx context.Context,
 
 func (i *InvoiceRepoMysql) GetInvoiceByID(ctx context.Context,
 	invoiceID int,
-	userID uint) (domain.Invoice,
+	userID uint) (domain.InvoiceResponse,
 	error) {
-	var invoice domain.Invoice
+	var invoice domain.InvoiceResponse
 
 	if err := i.DB.
 		WithContext(ctx).
+		Model(&domain.Invoice{}).
+		Select("invoices.id as invoice_id, hospitals.name as hospital_name, hospitals.address as hospital_address, hospitals.phone as hospital_phone, hospitals.city as hospital_city, hospitals.province as hospital_province, diagnoses.cancer_name, diagnoses.cancer_image, diagnoses.position as cancer_position").
 		Joins("JOIN diagnoses ON diagnoses.id = invoices.diagnose_id").
+		Joins("JOIN hospitals ON hospitals.id = invoices.hospital_id").
 		Where("diagnoses.user_id = ?", userID).
-		First(&invoice, invoiceID).Error; err != nil {
-		return domain.Invoice{}, err
+		Where("invoices.id = ?", invoiceID).
+		Scan(&invoice).Error; err != nil {
+		return domain.InvoiceResponse{}, err
 	}
 
 	return invoice, nil

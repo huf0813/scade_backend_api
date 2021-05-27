@@ -67,7 +67,7 @@ func (i *InvoiceHandler) GetInvoiceByID(c echo.Context) error {
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
-	if res.HospitalID == 0 || res.DiagnoseID == 0 {
+	if res.InvoiceID == 0 {
 		return echo.NewHTTPError(http.StatusInternalServerError, errors.New("failed"))
 	}
 	return c.JSON(http.StatusOK, custom_response.NewCustomResponse(

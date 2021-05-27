@@ -16,14 +16,26 @@ type InvoiceRequest struct {
 	DiagnoseID uint `json:"diagnose_id"`
 }
 
+type InvoiceResponse struct {
+	InvoiceID        uint   `json:"invoice_id"`
+	HospitalName     string `json:"hospital_name"`
+	HospitalAddress  string `json:"hospital_address"`
+	HospitalPhone    string `json:"hospital_phone"`
+	HospitalCity     string `json:"hospital_city"`
+	HospitalProvince string `json:"hospital_province"`
+	CancerName       string `json:"cancer_name"`
+	CancerImage      string `json:"cancer_image"`
+	CancerPosition   string `json:"cancer_position"`
+}
+
 type InvoiceRepository interface {
-	GetInvoices(ctx context.Context, userID uint) ([]Invoice, error)
-	GetInvoiceByID(ctx context.Context, invoiceID int, userID uint) (Invoice, error)
+	GetInvoices(ctx context.Context, userID uint) ([]InvoiceResponse, error)
+	GetInvoiceByID(ctx context.Context, invoiceID int, userID uint) (InvoiceResponse, error)
 	CreateInvoice(ctx context.Context, req *InvoiceRequest) error
 }
 
 type InvoiceUseCase interface {
-	GetInvoices(ctx context.Context, email string) ([]Invoice, error)
-	GetInvoiceByID(ctx context.Context, invoiceID int, email string) (Invoice, error)
+	GetInvoices(ctx context.Context, email string) ([]InvoiceResponse, error)
+	GetInvoiceByID(ctx context.Context, invoiceID int, email string) (InvoiceResponse, error)
 	CreateInvoice(ctx context.Context, create *InvoiceRequest, email string) error
 }

@@ -26,7 +26,7 @@ func NewInvoiceUseCase(i domain.InvoiceRepository,
 }
 
 func (i *InvoiceUseCase) GetInvoices(ctx context.Context,
-	email string) ([]domain.Invoice,
+	email string) ([]domain.InvoiceResponse,
 	error) {
 	ctx, cancel := context.WithTimeout(ctx, i.timeOut)
 	defer cancel()
@@ -46,19 +46,19 @@ func (i *InvoiceUseCase) GetInvoices(ctx context.Context,
 
 func (i *InvoiceUseCase) GetInvoiceByID(ctx context.Context,
 	invoiceID int,
-	email string) (domain.Invoice,
+	email string) (domain.InvoiceResponse,
 	error) {
 	ctx, cancel := context.WithTimeout(ctx, i.timeOut)
 	defer cancel()
 
 	user, err := i.userRepoMysql.GetUserByEmail(ctx, email)
 	if err != nil {
-		return domain.Invoice{}, err
+		return domain.InvoiceResponse{}, err
 	}
 
 	result, err := i.invoiceRepoMysql.GetInvoiceByID(ctx, invoiceID, user.ID)
 	if err != nil {
-		return domain.Invoice{}, err
+		return domain.InvoiceResponse{}, err
 	}
 	return result, nil
 }
