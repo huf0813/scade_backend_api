@@ -22,7 +22,7 @@ func (i *InvoiceRepoMysql) GetInvoices(ctx context.Context,
 	if err := i.DB.
 		WithContext(ctx).
 		Model(&domain.Invoice{}).
-		Select("invoices.id as invoice_id, hospitals.name as hospital_name, hospitals.address as hospital_address, hospitals.phone as hospital_phone, hospitals.city as hospital_city, hospitals.province as hospital_province, diagnoses.cancer_name, diagnoses.cancer_image, diagnoses.position as cancer_position").
+		Select("invoices.id as invoice_id, invoices.created_at as invoice_created_at, invoices.updated_at as invoice_updated_at, hospitals.name as hospital_name, hospitals.address as hospital_address, hospitals.phone as hospital_phone, hospitals.city as hospital_city, hospitals.province as hospital_province, diagnoses.cancer_name, diagnoses.cancer_image, diagnoses.position as cancer_position").
 		Joins("JOIN diagnoses ON diagnoses.id = invoices.diagnose_id").
 		Joins("JOIN hospitals ON hospitals.id = invoices.hospital_id").
 		Where("diagnoses.user_id = ?", userID).
@@ -42,7 +42,7 @@ func (i *InvoiceRepoMysql) GetInvoiceByID(ctx context.Context,
 	if err := i.DB.
 		WithContext(ctx).
 		Model(&domain.Invoice{}).
-		Select("invoices.id as invoice_id, hospitals.name as hospital_name, hospitals.address as hospital_address, hospitals.phone as hospital_phone, hospitals.city as hospital_city, hospitals.province as hospital_province, diagnoses.cancer_name, diagnoses.cancer_image, diagnoses.position as cancer_position").
+		Select("invoices.id as invoice_id, invoices.created_at as invoice_created_at, invoices.updated_at as invoice_updated_at, hospitals.name as hospital_name, hospitals.address as hospital_address, hospitals.phone as hospital_phone, hospitals.city as hospital_city, hospitals.province as hospital_province, diagnoses.cancer_name, diagnoses.cancer_image, diagnoses.position as cancer_position").
 		Joins("JOIN diagnoses ON diagnoses.id = invoices.diagnose_id").
 		Joins("JOIN hospitals ON hospitals.id = invoices.hospital_id").
 		Where("diagnoses.user_id = ?", userID).

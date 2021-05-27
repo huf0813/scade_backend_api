@@ -26,6 +26,8 @@ type InvoiceResponse struct {
 	CancerName       string `json:"cancer_name"`
 	CancerImage      string `json:"cancer_image"`
 	CancerPosition   string `json:"cancer_position"`
+	InvoiceCreatedAt string `json:"invoice_created_at"`
+	InvoiceUpdatedAt string `json:"invoice_updated_at"`
 }
 
 type InvoiceRepository interface {
