@@ -29,7 +29,7 @@ func (h *HospitalRepoMysql) GetHospitalsByCity(ctx context.Context, city string)
 	var hospitals []domain.Hospital
 	if err := h.DB.
 		WithContext(ctx).
-		Where("city = ?", city).
+		Where("region = ?", city).
 		Find(&hospitals).
 		Error; err != nil {
 		return nil, err
