@@ -32,6 +32,9 @@ func NewInvoiceHandler(e *echo.Echo,
 	e.POST("/invoices/create",
 		handler.CreateInvoice,
 		middleware.JWTWithConfig(authMiddleware))
+	e.PUT("/invoices/:id",
+		handler.UpdateInvoice,
+		middleware.JWTWithConfig(authMiddleware))
 }
 
 func (i *InvoiceHandler) GetInvoiceImage(c echo.Context) error {
@@ -120,4 +123,36 @@ func (i *InvoiceHandler) CreateInvoice(c echo.Context) error {
 		true,
 		"invoice created successfully",
 		nil))
+}
+
+func (i *InvoiceHandler) UpdateInvoice(c echo.Context) error {
+	updateRequest := new(domain.InvoiceUpdateHospitalRequest)
+	if err := c.Bind(updateRequest); err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+	if err := c.Validate(updateRequest); err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+
+	bearer := c.Request().Header.Get("Authorization")
+	token, err := auth.NewTokenExtraction(bearer)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+	id := c.Param("id")
+	idInteger, err := strconv.Atoi(id)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+	ctx := c.Request().Context()
+	if err := i.InvoiceUseCase.UpdateInvoice(ctx,
+		updateRequest,
+		token.Email,
+		idInteger); err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+	}
+	return c.JSON(http.StatusOK, custom_response.NewCustomResponse(
+		true,
+		"Update hospital successfully", nil),
+	)
 }

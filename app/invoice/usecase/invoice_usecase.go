@@ -81,3 +81,25 @@ func (i *InvoiceUseCase) CreateInvoice(ctx context.Context,
 
 	return nil
 }
+
+func (i *InvoiceUseCase) UpdateInvoice(ctx context.Context,
+	update *domain.InvoiceUpdateHospitalRequest,
+	email string,
+	invoiceID int) error {
+	ctx, cancel := context.WithTimeout(ctx, i.timeOut)
+	defer cancel()
+
+	result, err := i.GetInvoiceByID(ctx, invoiceID, email)
+	if err != nil {
+		return err
+	}
+
+	invoice := domain.InvoiceRequest{
+		DiagnoseID: result.InvoiceID,
+		HospitalID: update.HospitalID,
+	}
+	if err := i.invoiceRepoMysql.UpdateInvoice(ctx, &invoice, invoiceID); err != nil {
+		return err
+	}
+	return nil
+}
