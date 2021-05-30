@@ -10,7 +10,7 @@ type Hospital struct {
 	Name     string    `gorm:"not_null" json:"name"`
 	Address  string    `gorm:"not_null" json:"address"`
 	Phone    string    `gorm:"not_null" json:"phone"`
-	City     string    `gorm:"not_null" json:"city"`
+	Region   string    `gorm:"not_null" json:"region"`
 	Province string    `gorm:"not_null" json:"province"`
 	Invoices []Invoice `gorm:"foreignKey:HospitalID" json:"invoices"`
 }

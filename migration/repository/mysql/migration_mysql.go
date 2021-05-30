@@ -3,6 +3,7 @@ package mysql
 import (
 	"context"
 	"github.com/huf0813/scade_backend_api/domain"
+	"github.com/huf0813/scade_backend_api/upstream/covid_hospital"
 	"github.com/huf0813/scade_backend_api/utils/security"
 	"gorm.io/gorm"
 )
@@ -170,14 +171,11 @@ func (m *MigrationRepoMysql) Seed(ctx context.Context) error {
 		return err
 	}
 
-	hospital := domain.Hospital{
-		Name:     "RS Bagus",
-		Address:  "JL. Sigura",
-		Phone:    "0813",
-		City:     "Malang",
-		Province: "Jawa Timur",
+	result, err := covid_hospital.Load()
+	if err != nil {
+		return err
 	}
-	if err := m.DB.WithContext(ctx).Create(&hospital).
+	if err := m.DB.WithContext(ctx).Create(result).
 		Error; err != nil {
 		return err
 	}
