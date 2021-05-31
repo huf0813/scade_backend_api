@@ -56,10 +56,6 @@ func (d *DiagnoseHandler) GetDiagnoseImage(c echo.Context) error {
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
-	if os.IsNotExist(err) {
-		file, _ := os.Open("assets/default/default.jpg")
-		return c.Stream(http.StatusInternalServerError, "image/jpg", file)
-	}
 	return c.Stream(http.StatusOK, "image/jpg", f)
 }
 

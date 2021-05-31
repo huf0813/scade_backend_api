@@ -2,14 +2,12 @@ package http
 
 import (
 	"errors"
-	"fmt"
 	"github.com/huf0813/scade_backend_api/domain"
 	"github.com/huf0813/scade_backend_api/utils/auth"
 	"github.com/huf0813/scade_backend_api/utils/custom_response"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"net/http"
-	"os"
 	"strconv"
 )
 
@@ -27,28 +25,12 @@ func NewInvoiceHandler(e *echo.Echo,
 	e.GET("/invoices/:id",
 		handler.GetInvoiceByID,
 		middleware.JWTWithConfig(authMiddleware))
-	e.GET("/invoices/image/:file",
-		handler.GetInvoiceImage)
 	e.POST("/invoices/create",
 		handler.CreateInvoice,
 		middleware.JWTWithConfig(authMiddleware))
 	e.PUT("/invoices/:id",
 		handler.UpdateInvoice,
 		middleware.JWTWithConfig(authMiddleware))
-}
-
-func (i *InvoiceHandler) GetInvoiceImage(c echo.Context) error {
-	filename := c.Param("file")
-	path := fmt.Sprintf("assets/skin_image/%s", filename)
-	f, err := os.Open(path)
-	if err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
-	}
-	if os.IsNotExist(err) {
-		file, _ := os.Open("assets/default/default.jpg")
-		return c.Stream(http.StatusInternalServerError, "image/jpg", file)
-	}
-	return c.Stream(http.StatusOK, "image/jpg", f)
 }
 
 func (i *InvoiceHandler) GetInvoices(c echo.Context) error {
