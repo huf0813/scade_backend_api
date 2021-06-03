@@ -18,7 +18,9 @@ RUN apk --no-cache add ca-certificates
 WORKDIR /root/
 
 RUN mkdir -p ./assets/skin_image
+RUN mkdir -p ./assets/article
 
+COPY /assets/article/default.jpg ./assets/article
 COPY --from=builder /app/main .
 COPY --from=builder /app/.env .
 

@@ -1,11 +1,13 @@
 package http
 
 import (
+	"fmt"
 	"github.com/huf0813/scade_backend_api/domain"
 	"github.com/huf0813/scade_backend_api/utils/custom_response"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"net/http"
+	"os"
 	"strconv"
 )
 
@@ -15,20 +17,23 @@ type ArticleHandler struct {
 
 func NewArticleHandler(e *echo.Echo, auc domain.ArticleUseCase, authMiddleware middleware.JWTConfig) {
 	handler := ArticleHandler{ArticleUseCase: auc}
+	e.GET("/articles/image/:file", handler.GetArticleImage)
 	e.GET("/articles", handler.GetArticles)
 	e.GET("/articles/:language", handler.GetArticlesBasedOnLanguage)
 	e.GET("/articles/:language/:id", handler.GetArticlesBasedOnLanguageByID)
 	e.POST("/articles/create", handler.CreateArticle, middleware.JWTWithConfig(authMiddleware))
 }
 
-// HealthCheck godoc
-// @Summary Show the status of server.
-// @Description get the articles.
-// @Tags articles
-// @Accept */*
-// @Produce json
-// @Success 200 {object} map[string]interface{}
-// @Router /articles [get]
+func (ah *ArticleHandler) GetArticleImage(c echo.Context) error {
+	filename := c.Param("file")
+	path := fmt.Sprintf("assets/article/%s", filename)
+	f, err := os.Open(path)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+	}
+	return c.Stream(http.StatusOK, "image/jpg", f)
+}
+
 func (ah *ArticleHandler) GetArticles(c echo.Context) error {
 	ctx := c.Request().Context()
 	res, err := ah.ArticleUseCase.GetArticles(ctx)
