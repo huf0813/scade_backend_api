@@ -429,6 +429,7 @@ way. This may help to prevent skin cancer and reduce the death rate.
       "data": null
    }
    ```
-   wdyt? super cool, isn't? Cheers! 
-   <br>
    ![cheers](https://media.giphy.com/media/3KC2jD2QcBOSc/giphy.gif)
+   > **wdyt? *this is cool* isn't?**
+   >
+   > **Scade brings Artificial Intelligence <i>accessible</i> for everyone :sunglasses:**
