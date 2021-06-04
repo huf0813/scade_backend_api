@@ -21,7 +21,7 @@ way. This may help to prevent skin cancer and reduce the death rate.
 ## :rocket: How To Run
 
 1. The app is combined with docker, make sure your environment support docker too.
-1. Launch the app with a simple command ```yaml docker-compose up --build -d```
+1. Launch the app with a simple command ```docker-compose up --build -d```
 1. Well done! You are ready to go :partying_face:
 
 ## :shamrock: References
