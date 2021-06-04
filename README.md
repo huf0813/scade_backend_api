@@ -429,5 +429,6 @@ way. This may help to prevent skin cancer and reduce the death rate.
       "data": null
    }
    ```
-   wdyt? super cool, isn't? Cheers!
-   ![cheers](https://media.giphy.com/media/kv5fbxHVAEOjrHeCLk/giphy.gif)
+   wdyt? super cool, isn't? Cheers! 
+   <br>
+   ![cheers](https://media.giphy.com/media/3KC2jD2QcBOSc/giphy.gif)
